@@ -10,7 +10,7 @@ public enum Direction {
   EAST(0, 1),
   SOUTH(1, 0),
   WEST(0, -1),
-  NONE(0, 0);
+  ZERO(0, 0);
 
   private final int row;
   private final int column;
@@ -54,7 +54,9 @@ public enum Direction {
       case "WEST":
         return EAST;
       default:
-        return NONE;
+        return ZERO;
     }
   }
+
+
 }

@@ -1,5 +1,7 @@
 package dungeon.model;
 
+import org.javatuples.Pair;
+
 import java.util.List;
 import java.util.Map;
 import random.Randomizer;
@@ -28,7 +30,7 @@ public interface Player {
    *
    * @param whichDirection {@link Direction}.
    */
-  int moveToLocation(Randomizer rnd, Direction whichDirection, boolean isWrap);
+  Pair<SmellFactor, WindFactor> moveToLocation(Randomizer rnd, Direction whichDirection, boolean isWrap);
 
   /**
    * Method to get the possible {@link Direction}s where the Player can move to next.
@@ -56,7 +58,7 @@ public interface Player {
    *
    * @param l where the player needs to be placed.
    */
-  int setLocation(Location l, Randomizer rnd);
+  Pair<SmellFactor, WindFactor> setLocation(Location l, Randomizer rnd);
 
   /**
    * Method to collect treasure from the Location/ Cave currently at.
@@ -105,5 +107,5 @@ public interface Player {
    * @param rnd random number generator.
    * @return integer value of the smell of the Otyugh in increasing sense.
    */
-  int getSmellFactor(Randomizer rnd);
+  Pair<SmellFactor, WindFactor> getSenseFactor(Randomizer rnd);
 }

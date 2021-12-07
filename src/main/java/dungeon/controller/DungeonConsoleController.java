@@ -1,9 +1,14 @@
 package dungeon.controller;
 
+import org.javatuples.Pair;
+
 import dungeon.model.Dungeon;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+
+import dungeon.model.SmellFactor;
+import dungeon.model.WindFactor;
 import random.Randomizer;
 
 /**
@@ -48,13 +53,16 @@ public class DungeonConsoleController implements DungeonController {
       throw new IllegalArgumentException("Invalid model.");
     }
 
-    showSmellFactor(dungeonGame.startQuest());
+    showSmellFactor(dungeonGame.startQuest().getValue0().getSmellFactor());
     loop:
     while (!dungeonGame.gameOver()) {
       out.append(dungeonGame.toString()).append("\n");
       out.append("Doors lead to: ");
       out.append(dungeonGame.getPlayerMoves().toString()).append("\n\n");
-      showSmellFactor(dungeonGame.getPlayerSmellFactor());
+
+      showSmellFactor(dungeonGame.getPlayerSenseFactor().getValue0().getSmellFactor());
+      showWindFactor(dungeonGame.getPlayerSenseFactor().getValue1().getWindFactor());
+
       out.append(dungeonGame.getPlayerInfo()).append("\n");
       out.append("Move Pick Shoot ? ( M/P/S )\n");
       String choice = scan.next();
@@ -138,18 +146,32 @@ public class DungeonConsoleController implements DungeonController {
     out.append(dungeonGame.getPlayersCollectedTreasure().toString()).append("\n");
   }
 
-  private int move(Dungeon dungeonGame, String direction, Appendable out, Randomizer rnd)
+  private void move(Dungeon dungeonGame, String direction, Appendable out, Randomizer rnd)
           throws IOException {
-    int smellFactor = 0;
+    Pair<SmellFactor, WindFactor> senseFactor = new Pair<>(SmellFactor.NO_SMELL, WindFactor.NO_WIND);
     try {
-      smellFactor = dungeonGame.movePlayer(direction, rnd);
+      senseFactor = dungeonGame.movePlayer(direction);
 
-      showSmellFactor(smellFactor);
+      showSmellFactor(senseFactor.getValue0().getSmellFactor());
+      showWindFactor(senseFactor.getValue1().getWindFactor());
     } catch (IllegalArgumentException ex) {
       out.append("Didn't get you? Try from available directions.\n");
     }
+  }
 
-    return smellFactor;
+  private void showWindFactor(int windFactor) throws IOException {
+    switch (windFactor) {
+      case 0:
+        break;
+      case 1:
+        out.append("You feel a light breeze around.\n");
+        break;
+      case 2:
+        out.append("You feel a powerful wind around. Doesn't feel good\n");
+        break;
+      default:
+        out.append("There was a glitch.\n");
+    }
   }
 
   private void showSmellFactor(int smellFactor) throws IOException {

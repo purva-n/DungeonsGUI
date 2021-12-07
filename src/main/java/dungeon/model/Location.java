@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
 import random.Randomizer;
 
 /**
@@ -48,6 +49,7 @@ public class Location {
     this.entitiesInLoc.add(new Treasure());
     this.entitiesInLoc.add(new Otyugh());
     this.entitiesInLoc.add(new Arrow());
+    this.entitiesInLoc.add(new Pit());
 
   }
 
@@ -114,6 +116,10 @@ public class Location {
     this.getOtyugh().setHealth(this.getOtyugh().getHealth() * this.getOtyugh().getQuantity());
   }
 
+  void addPit() {
+    this.entitiesInLoc.get(Constants.PIT.ordinal()).updateQuantity(1);
+  }
+
   /**
    * Method to set the {@link Player} at the referenced Location.
    *
@@ -134,6 +140,10 @@ public class Location {
 
   public Otyugh getOtyugh() {
     return ((Otyugh) entitiesInLoc.get(Constants.OTYUGH.ordinal()));
+  }
+
+  public AbstractEntity getPit() {
+    return ((Pit) entitiesInLoc.get(Constants.PIT.ordinal()));
   }
 
   public List<Direction> getHasConnectionAt() {

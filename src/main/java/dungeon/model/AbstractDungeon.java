@@ -1,5 +1,7 @@
 package dungeon.model;
 
+import org.javatuples.Pair;
+
 import java.util.List;
 import java.util.Map;
 import random.Randomizer;
@@ -22,7 +24,7 @@ public abstract class AbstractDungeon implements Dungeon {
   public abstract int getInterconnectivity();
 
   @Override
-  public abstract int startQuest();
+  public abstract Pair<SmellFactor, WindFactor> startQuest();
 
   @Override
   public List<Direction> getPlayerMoves() {
@@ -30,8 +32,8 @@ public abstract class AbstractDungeon implements Dungeon {
   }
 
   @Override
-  public int getPlayerSmellFactor() {
-    return 0;
+  public Pair<SmellFactor, WindFactor> getPlayerSenseFactor() {
+    return new Pair<>(SmellFactor.NO_SMELL, WindFactor.NO_WIND);
   }
 
   @Override
@@ -63,8 +65,8 @@ public abstract class AbstractDungeon implements Dungeon {
   public abstract Location getEndLoc();
 
   @Override
-  public int movePlayer(String direction, Randomizer rnd) {
-    return 0;
+  public Pair<SmellFactor, WindFactor> movePlayer(String direction) {
+    return new Pair<>(SmellFactor.NO_SMELL, WindFactor.NO_WIND);
   }
 
   @Override
@@ -97,6 +99,7 @@ public abstract class AbstractDungeon implements Dungeon {
     return false;
   }
 
+  @Override
   public abstract Location getLocationAt(int row, int column);
 
   @Override
@@ -105,17 +108,14 @@ public abstract class AbstractDungeon implements Dungeon {
 
   @Override
   public void setColumn(Integer col) {
-
   }
 
   @Override
   public void setInterconnectivity(Integer interconnectivity) {
-
   }
 
   @Override
   public void setTreasurePercent(Integer treasurePercent) {
-
   }
 
   @Override
@@ -123,9 +123,7 @@ public abstract class AbstractDungeon implements Dungeon {
   }
 
   @Override
-  public void setIsWrap(boolean isWrap) {
-
-  }
+  public void setIsWrap(boolean isWrap) {}
 
   @Override
   public int getTreasureArrowPercent() {
@@ -135,5 +133,10 @@ public abstract class AbstractDungeon implements Dungeon {
   @Override
   public int getNumberOfOtyughs() {
     return 0;
+  }
+
+  @Override
+  public Direction getValidDirectionOfLocationAt(int row, int column) {
+    return Direction.ZERO;
   }
 }

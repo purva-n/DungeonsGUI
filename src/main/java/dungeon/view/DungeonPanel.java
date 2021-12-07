@@ -1,7 +1,6 @@
 package dungeon.view;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -9,7 +8,8 @@ import dungeon.model.ReadOnlyDungeon;
 
 public class DungeonPanel extends JPanel {
 
-  private ReadOnlyDungeon dungeon;
+  private final ReadOnlyDungeon dungeon;
+  //private JLabel[][] dungeonGrid;
 
   DungeonPanel(ReadOnlyDungeon dungeon) {
     this.dungeon = dungeon;
@@ -18,6 +18,6 @@ public class DungeonPanel extends JPanel {
 
   @Override
   public void paintComponent(Graphics g) {
-    super.paintComponent(g);
+
   }
 }

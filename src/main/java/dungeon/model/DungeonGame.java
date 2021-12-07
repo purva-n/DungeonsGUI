@@ -1,5 +1,7 @@
 package dungeon.model;
 
+import org.javatuples.Pair;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,7 +32,6 @@ public class DungeonGame implements Dungeon {
   private Location start;
   private Location end;
   private boolean gameStarted;
-
   private Randomizer rnd;
 
   public DungeonGame() {
@@ -110,6 +111,11 @@ public class DungeonGame implements Dungeon {
   }
 
   @Override
+  public Location getLocationAt(int i, int j) {
+    return dungeon.get(i).get(j);
+  }
+
+  @Override
   public Location getStartLoc() {
     return start;
   }
@@ -144,8 +150,8 @@ public class DungeonGame implements Dungeon {
   }
 
   @Override
-  public int getPlayerSmellFactor() {
-    return player.getSmellFactor(rnd);
+  public Pair<SmellFactor, WindFactor> getPlayerSenseFactor() {
+    return player.getSenseFactor(rnd);
   }
 
   @Override
@@ -280,13 +286,21 @@ public class DungeonGame implements Dungeon {
 //  }
 
   @Override
-  public Location getLocationAt(int row, int column) {
-    return dungeon.get(row).get(column);
+  public Direction getValidDirectionOfLocationAt(int row, int column) {
+    Location selectedLocation = dungeon.get(row).get(column);
+    Location playerLocation = player.getAtLocation();
+
+    if(playerLocation.getIsConnectedToLoc().contains(selectedLocation)) {
+      return playerLocation.getHasConnectionAt().
+              get(playerLocation.getIsConnectedToLoc().indexOf(selectedLocation));
+    } else {
+      return Direction.ZERO;
+    }
   }
 
 
   @Override
-  public int startQuest() {
+  public Pair<SmellFactor, WindFactor> startQuest() {
 
     constructDungeon();
     for (int i = 0; i < dungeonRow; i++) {
@@ -299,7 +313,7 @@ public class DungeonGame implements Dungeon {
     player.setLocation(start, rnd);
     gameStarted = true;
 
-    return getPlayerSmellFactor();
+    return getPlayerSenseFactor();
   }
 
   @Override
@@ -346,7 +360,7 @@ public class DungeonGame implements Dungeon {
   }
 
   @Override
-  public int movePlayer(String direction, Randomizer rnd) {
+  public Pair<SmellFactor, WindFactor> movePlayer(String direction) {
     if (!player.checkValidDirection(direction)) {
       throw new IllegalArgumentException("Select from possible moves. try again!");
     }
@@ -648,6 +662,7 @@ public class DungeonGame implements Dungeon {
       enlistCaves();
       addTreasureToCaves(rnd, treasureArrowPercent);
       addArrowsToLocation(rnd, treasureArrowPercent);
+      addPitToCaves(rnd, numOtyughs);
 
       this.start = caves.get(rnd.getRandomFromBound(caves.size()));
       this.end = caves.get(rnd.getRandomFromBound(caves.size()));
@@ -656,5 +671,21 @@ public class DungeonGame implements Dungeon {
 
       addOtyughToCaves(rnd, numOtyughs);
     } while (startEndLength < 5);
+  }
+
+  private void addPitToCaves(Randomizer rnd, int numPits) {
+    if(numPits > 4) {
+      numPits /= 2;
+    }
+    for (int i = 0; i < numPits  ; i++) {
+      Location loc = caves.get(rnd.getRandomFromBound(caves.size()));
+
+      if (loc.equals(this.start)) {
+        i -= 1;
+        continue;
+      }
+
+      loc.addPit();
+    }
   }
 }

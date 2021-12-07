@@ -1,5 +1,7 @@
 package dungeon.model;
 
+import org.javatuples.Pair;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -132,10 +134,9 @@ public class DungeonStatic extends AbstractDungeon {
   }
 
   @Override
-  public int startQuest() {
+  public Pair<SmellFactor, WindFactor> startQuest() {
     start.setPlayer(player, rnd);
-    player.setLocation(start, rnd);
-    return 0;
+    return player.setLocation(start, rnd);
   }
 
   @Override

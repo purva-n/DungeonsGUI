@@ -1,6 +1,7 @@
 package dungeon.controller;
 
 import dungeon.controller.DungeonController;
+import dungeon.model.Direction;
 
 public interface Features {
 
@@ -11,6 +12,8 @@ public interface Features {
   void pickArrow();
 
   void move(String direction);
+
+  Direction getValidDirectionOfLocationAt(int row, int col);
 
   void startGame();
 

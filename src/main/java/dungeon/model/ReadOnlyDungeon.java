@@ -1,5 +1,7 @@
 package dungeon.model;
 
+import org.javatuples.Pair;
+
 import java.util.List;
 import java.util.Map;
 
@@ -16,15 +18,13 @@ public interface ReadOnlyDungeon {
 
   int getNumberOfOtyughs();
 
-  Location getLocationAt(int row, int col);
-
   boolean gameOver();
 
   boolean gameBegin();
 
   List<Direction> getPlayerMoves();
 
-  int getPlayerSmellFactor();
+  Pair<SmellFactor, WindFactor> getPlayerSenseFactor();
 
   String getPlayerInfo();
 
@@ -83,4 +83,5 @@ public interface ReadOnlyDungeon {
 
   Player getPlayer();
 
+  Location getLocationAt(int i, int j);
 }

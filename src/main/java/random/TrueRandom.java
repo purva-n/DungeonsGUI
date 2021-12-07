@@ -16,6 +16,7 @@ public class TrueRandom implements Randomizer {
     } catch (IllegalArgumentException iae) {
       return start;
     }
+
   }
 
   @Override

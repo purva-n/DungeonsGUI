@@ -1,5 +1,6 @@
 package dungeon.view;
 
+import dungeon.controller.DungeonViewController;
 import dungeon.controller.Features;
 
 public interface DungeonView {
@@ -46,5 +47,11 @@ public interface DungeonView {
 
   void resetIsWrapFocus();
 
-  void addPanel();
+  void addPanel(DungeonViewController controller);
+
+  void clearPanel();
+
+  void resetFocus();
+
+  String getImageNameOfCell(int row, int col);
 }

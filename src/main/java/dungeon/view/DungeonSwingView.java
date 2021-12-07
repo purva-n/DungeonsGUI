@@ -1,6 +1,7 @@
 package dungeon.view;
 
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import dungeon.controller.DungeonViewController;
 import dungeon.controller.Features;
 import dungeon.model.ReadOnlyDungeon;
 
@@ -34,11 +36,12 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   private JTextField isWrap;
   private JTextField numOtyughs;
   private JTextField treasureArrowPercent;
+  //private JScrollPane scrollableDungeon;
   private ReadOnlyDungeon dungeon;
 
   public DungeonSwingView(ReadOnlyDungeon dungeon) {
 
-    setSize(300, 400);
+    setSize(450, 550);
     setLocation(200, 200);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -104,12 +107,14 @@ public class DungeonSwingView extends JFrame implements DungeonView {
     this.setJMenuBar(menubar);
 
     this.dungeon = dungeon;
+    //this.scrollableDungeon = new JScrollPane(panel);
   }
 
   @Override
   public void setFeatures(Features f) {
     startQuest.addActionListener(l -> f.startGame());
     restartQuest.addActionListener(l -> f.restartGame());
+    quit.addActionListener(l -> System.exit(0));
     rowsOkay.addActionListener(l -> f.processRows());
     columnsOkay.addActionListener(l -> f.processColumns());
     interconnectivityOkay.addActionListener(l -> f.processInterconnectivity());
@@ -126,6 +131,7 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   @Override
   public void refresh() {
     this.repaint();
+    panel.revalidate();
   }
 
   @Override
@@ -219,57 +225,87 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   }
 
   @Override
-  public void addPanel() {
-    panel = new DungeonPanel(dungeon);
+  public void addPanel(DungeonViewController controller) {
+    if (panel == null) {
+      panel = new DungeonPanel(dungeon);
+    } else {
+      //scrollableDungeon.remove(panel);
+      clearPanel();
+    }
+    panel.setLayout(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(1, 1, 1, 1);
+    gbc.weightx = 0;
+    gbc.weighty = 0;
+    gbc.fill = GridBagConstraints.NONE;
 
-    panel.setLayout(new GridLayout());
-
-    // https://www.javatpoint.com/java-jscrollpane
-    JScrollPane scrollableDungeon = new JScrollPane(panel);
-    this.getContentPane().add(scrollableDungeon);
-
-    this.pack();
-    setLocationRelativeTo(null);
     JLabel tempLabel;
 
     for (int i = 0; i < dungeon.getDimensionRow(); i++) {
+      gbc.gridy = i;
       for (int j = 0; j < dungeon.getDimensionColumn(); j++) {
-
+        gbc.gridx = j;
         try {
           if (dungeon.getLocationAt(i, j).getIsTraversed()) {
-            List<String> dirInitials = dungeon.getLocationAt(i, j).getHasConnectionAt().stream()
-                    .map(dir -> dir.name().substring(0, 1)).collect(Collectors.toList());
-            StringBuilder imageName = new StringBuilder();
-            if(dirInitials.contains("N")) {
-              imageName.append("N");
-            }
-
-            if(dirInitials.contains("S")) {
-              imageName.append("S");
-            }
-
-            if(dirInitials.contains("E")) {
-              imageName.append("E");
-            }
-
-            if(dirInitials.contains("W")) {
-              imageName.append("W");
-            }
+            String imageName = getImageNameOfCell(i, j);
 
             tempLabel = new JLabel(new ImageIcon(ImageIO.read(
                     new File("./dungeon-images/dungeon-images/color-cells/"
-                            + imageName +".png"))));
-
+                            + imageName + ".png"))));
           } else {
-            tempLabel = new JLabel(new ImageIcon(ImageIO.read(new File("./dungeon-images/dungeon-images/blank.png"))));
+            tempLabel = new JLabel(new ImageIcon(ImageIO.read(
+                    new File("./dungeon-images/dungeon-images/blank.png"))));
           }
-          panel.add(tempLabel);
-        } catch (IOException ioe) {
-          System.out.println();
 
+          MouseListener ml = new MyMouseAdapter(controller, this);
+          tempLabel.addMouseListener(ml);
+          tempLabel.setName(i + " " + j);
+          panel.add(tempLabel, gbc);
+        } catch (IOException ioe) {
           ioe.printStackTrace();
         }
       }
     }
+
+    // https://www.javatpoint.com/java-jscrollpane
+//    JScrollPane scrollableDungeon = new JScrollPane(panel);
+//    this.add(scrollableDungeon);
+
+    this.add(panel);
+  }
+
+  @Override
+  public void clearPanel() {
+    panel.removeAll();
+  }
+
+  @Override
+  public void resetFocus() {
+    this.setFocusable(true);
+    this.requestFocus();
+  }
+
+  @Override
+  public String getImageNameOfCell(int row, int col) {
+    List<String> dirInitials = dungeon.getLocationAt(row, col).getHasConnectionAt().stream()
+            .map(dir -> dir.name().substring(0, 1)).collect(Collectors.toList());
+    StringBuilder imageName = new StringBuilder();
+    if (dirInitials.contains("N")) {
+      imageName.append("N");
+    }
+
+    if (dirInitials.contains("S")) {
+      imageName.append("S");
+    }
+
+    if (dirInitials.contains("E")) {
+      imageName.append("E");
+    }
+
+    if (dirInitials.contains("W")) {
+      imageName.append("W");
+    }
+
+    return imageName.toString();
   }
 }

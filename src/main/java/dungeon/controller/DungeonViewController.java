@@ -4,8 +4,10 @@ import java.util.NoSuchElementException;
 
 import javax.swing.*;
 
+import dungeon.model.Direction;
 import dungeon.model.Dungeon;
 import dungeon.view.DungeonView;
+import random.TrueRandom;
 
 public class DungeonViewController extends JFrame implements Features {
 
@@ -39,14 +41,25 @@ public class DungeonViewController extends JFrame implements Features {
 
   @Override
   public void move(String direction) {
+    try {
+      model.movePlayer(direction);
+      view.refresh();
+    } catch (IllegalArgumentException | IllegalStateException e) {
+      //do nothing
+    }
+  }
 
+  @Override
+  public Direction getValidDirectionOfLocationAt(int row, int col) {
+    return model.getValidDirectionOfLocationAt(row, col);
   }
 
   @Override
   public void startGame() {
     model.startQuest();
-    view.addPanel();
+    view.addPanel(this);
     view.refresh();
+    view.resetFocus();
   }
 
   @Override

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.javatuples.Pair;
+
 import random.Randomizer;
 
 /**
@@ -18,7 +20,7 @@ public class PlayerImpl implements Player {
   private Location atLocation;
   private int arrowsQuantity;
   private boolean isAlive;
-  private int smellFactor;
+  private Pair<SmellFactor, WindFactor> senseFactor;
 
   /**
    * Constructor to construct the initial state of the PLayer before beginning the Game.
@@ -45,7 +47,7 @@ public class PlayerImpl implements Player {
     this.treasureCollected = player.getTreasureCollected();
     this.isAlive = player.isAlive();
     this.arrowsQuantity = player.getArrowQuantity();
-    this.smellFactor = player.getSmellFactor(rnd);
+    this.senseFactor = player.getSenseFactor(rnd);
   }
 
   @Override
@@ -64,7 +66,8 @@ public class PlayerImpl implements Player {
   }
 
   @Override
-  public int moveToLocation(Randomizer rnd, Direction whichDirection, boolean isWrap) {
+  public Pair<SmellFactor, WindFactor> moveToLocation(Randomizer rnd, Direction whichDirection,
+                                                      boolean isWrap) {
 
     if ((!atLocation.getHasConnectionAt().contains(whichDirection))) {
       throw new IllegalArgumentException("No door here");
@@ -94,10 +97,10 @@ public class PlayerImpl implements Player {
               .get(currentCol + whichDirection.getColumn());
     }
     this.atLocation = null;
-    int smell = this.setLocation(newLoc, rnd);
-    this.smellFactor = smell;
+    Pair<SmellFactor, WindFactor> senseFactor = this.setLocation(newLoc, rnd);
+    this.senseFactor = senseFactor;
 
-    return smell;
+    return senseFactor;
   }
 
   @Override
@@ -111,7 +114,7 @@ public class PlayerImpl implements Player {
   }
 
   @Override
-  public int setLocation(Location l, Randomizer rnd) {
+  public Pair<SmellFactor, WindFactor> setLocation(Location l, Randomizer rnd) {
     this.atLocation = l;
     this.currentRow = l.getR();
     this.currentCol = l.getC();
@@ -119,7 +122,7 @@ public class PlayerImpl implements Player {
     l.hasTraversed();
     l.setHasPlayer(true);
 
-    return checkSmell(rnd);
+    return checkSenseFactor(rnd);
   }
 
   @Override
@@ -185,7 +188,7 @@ public class PlayerImpl implements Player {
         Direction opposite = dirToGo.getOpposite();
 
         dirToGo = current.getHasConnectionAt().stream().filter(d -> !d.equals(opposite))
-                .findFirst().orElse(Direction.NONE);
+                .findFirst().orElse(Direction.ZERO);
       } else if (current.getType() == LocationType.CAVE) {
         distance--;
       }
@@ -216,48 +219,67 @@ public class PlayerImpl implements Player {
 
   @Override
   public String toString() {
-    Treasure t = getAtLocation().getTreasure();
-
     return getAtLocation().toString() + "\n"
             + "Player has arrows: "
             + getArrowQuantity();
   }
 
-  private int checkSmell(Randomizer rnd) {
-    int count = 0;
+  private Pair<SmellFactor, WindFactor> checkSenseFactor(Randomizer rnd) {
+    int otyughCount = 0;
+    int pitCount = 0;
 
+    if (atLocation.getPit().getQuantity() > 0) {
+      isAlive = false;
+      return new Pair<>(SmellFactor.NO_SMELL, WindFactor.IN_PIT);
+    }
     if (atLocation.getOtyugh().getQuantity() > 0) {
       if (atLocation.getOtyugh().getHealth() == 50) {
         int chance = rnd.getRandomFromBound(2);
         if (chance == 0) {
-          return 3;
+          return new Pair<>(SmellFactor.WITH_OTYUGH_SAVED, WindFactor.NO_WIND);
         }
       } else {
         isAlive = false;
-        return 4;
+        return new Pair<>(SmellFactor.WITH_OTYUGH_DEAD, WindFactor.NO_WIND);
       }
     }
 
     for (Location l : atLocation.getIsConnectedToLoc()) {
       if (l.getOtyugh().getQuantity() > 0) {
-        return 2;
+        otyughCount++;
+      }
+      if (l.getPit().getQuantity() > 0) {
+        pitCount++;
+      }
+
+      if (otyughCount > 0 && pitCount > 0) {
+        return new Pair<>(SmellFactor.MORE_PUNGENT, WindFactor.MORE_POWERFUL_WIND);
       }
     }
 
     for (Location l : atLocation.getIsConnectedToLoc()) {
       for (Location tempLoc : l.getIsConnectedToLoc()) {
         if (tempLoc.getOtyugh().getQuantity() > 0) {
-          count++;
+          otyughCount++;
+        }
+
+        if (tempLoc.getPit().getQuantity() > 0) {
+          pitCount++;
         }
       }
     }
 
-    if (count >= 2) {
-      return 2;
-    } else if (count == 1) {
-      return 1;
+    if (otyughCount >= 2 && pitCount >= 2) {
+      return new Pair<>(SmellFactor.MORE_PUNGENT, WindFactor.MORE_POWERFUL_WIND);
+    } else if (otyughCount == 1 && pitCount == 1) {
+      return new Pair<>(SmellFactor.LESS_PUNGENT, WindFactor.LESS_POWERFUL_WIND);
+    } else if (otyughCount >= 2 && pitCount == 1) {
+      return new Pair<>(SmellFactor.MORE_PUNGENT, WindFactor.LESS_POWERFUL_WIND);
+    } else if (otyughCount == 1 && pitCount >= 2) {
+      return new Pair<>(SmellFactor.LESS_PUNGENT, WindFactor.MORE_POWERFUL_WIND);
     }
-    return 0;
+
+    return new Pair<>(SmellFactor.NO_SMELL, WindFactor.NO_WIND);
   }
 
   @Override
@@ -281,7 +303,7 @@ public class PlayerImpl implements Player {
   }
 
   @Override
-  public int getSmellFactor(Randomizer rnd) {
-    return checkSmell(rnd);
+  public Pair<SmellFactor, WindFactor> getSenseFactor(Randomizer rnd) {
+    return checkSenseFactor(rnd);
   }
 }
