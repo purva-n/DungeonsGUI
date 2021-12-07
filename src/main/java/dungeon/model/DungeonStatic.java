@@ -202,6 +202,11 @@ public class DungeonStatic extends AbstractDungeon {
   }
 
   @Override
+  public boolean hasPlayerAt(int row, int col) {
+    return true;
+  }
+
+  @Override
   public boolean gameBegin() {
     return false;
   }

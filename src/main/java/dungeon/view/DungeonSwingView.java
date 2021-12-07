@@ -2,10 +2,9 @@ package dungeon.view;
 
 import java.awt.*;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -247,7 +246,7 @@ public class DungeonSwingView extends JFrame implements DungeonView {
         gbc.gridx = j;
         try {
           if (dungeon.getLocationAt(i, j).getIsTraversed()) {
-            String imageName = getImageNameOfCell(i, j);
+            String imageName = panel.getImageNameOfCell(i, j);
 
             tempLabel = new JLabel(new ImageIcon(ImageIO.read(
                     new File("./dungeon-images/dungeon-images/color-cells/"
@@ -257,10 +256,12 @@ public class DungeonSwingView extends JFrame implements DungeonView {
                     new File("./dungeon-images/dungeon-images/blank.png"))));
           }
 
-          MouseListener ml = new MyMouseAdapter(controller, this);
+          MouseListener ml = new MyMouseAdapter(controller);
           tempLabel.addMouseListener(ml);
           tempLabel.setName(i + " " + j);
+          tempLabel.setPreferredSize(new Dimension(150,150));
           panel.add(tempLabel, gbc);
+          panel.putClientProperty(i + " " + j, tempLabel);
         } catch (IOException ioe) {
           ioe.printStackTrace();
         }
@@ -283,29 +284,5 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   public void resetFocus() {
     this.setFocusable(true);
     this.requestFocus();
-  }
-
-  @Override
-  public String getImageNameOfCell(int row, int col) {
-    List<String> dirInitials = dungeon.getLocationAt(row, col).getHasConnectionAt().stream()
-            .map(dir -> dir.name().substring(0, 1)).collect(Collectors.toList());
-    StringBuilder imageName = new StringBuilder();
-    if (dirInitials.contains("N")) {
-      imageName.append("N");
-    }
-
-    if (dirInitials.contains("S")) {
-      imageName.append("S");
-    }
-
-    if (dirInitials.contains("E")) {
-      imageName.append("E");
-    }
-
-    if (dirInitials.contains("W")) {
-      imageName.append("W");
-    }
-
-    return imageName.toString();
   }
 }

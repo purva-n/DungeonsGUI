@@ -1,5 +1,9 @@
 package dungeon.view;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
 import dungeon.controller.DungeonViewController;
 import dungeon.controller.Features;
 
@@ -52,6 +56,4 @@ public interface DungeonView {
   void clearPanel();
 
   void resetFocus();
-
-  String getImageNameOfCell(int row, int col);
 }

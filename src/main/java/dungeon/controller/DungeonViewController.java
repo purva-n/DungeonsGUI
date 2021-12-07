@@ -1,11 +1,15 @@
 package dungeon.controller;
 
+import org.javatuples.Pair;
+
 import java.util.NoSuchElementException;
 
 import javax.swing.*;
 
 import dungeon.model.Direction;
 import dungeon.model.Dungeon;
+import dungeon.model.SmellFactor;
+import dungeon.model.WindFactor;
 import dungeon.view.DungeonView;
 import random.TrueRandom;
 

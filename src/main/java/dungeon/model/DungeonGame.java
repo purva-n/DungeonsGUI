@@ -362,6 +362,11 @@ public class DungeonGame implements Dungeon {
   }
 
   @Override
+  public boolean hasPlayerAt(int row, int col) {
+    return dungeon.get(row).get(col).getHasPlayer();
+  }
+
+  @Override
   public Pair<SmellFactor, WindFactor> movePlayer(String direction) {
     if (!player.checkValidDirection(direction)) {
       throw new IllegalArgumentException("Select from possible moves. try again!");

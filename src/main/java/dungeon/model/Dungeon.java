@@ -8,8 +8,6 @@ import org.javatuples.Pair;
  */
 public interface Dungeon extends ReadOnlyDungeon {
 
-  Object getValidDirectionOfLocationAt(int row, int column);
-
   /**
    * Method to set the player at the start location of the dungeon.
    *

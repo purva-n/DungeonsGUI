@@ -84,4 +84,8 @@ public interface ReadOnlyDungeon {
   Player getPlayer();
 
   Location getLocationAt(int i, int j);
+
+  boolean hasPlayerAt(int row, int col);
+
+  Object getValidDirectionOfLocationAt(int row, int column);
 }
