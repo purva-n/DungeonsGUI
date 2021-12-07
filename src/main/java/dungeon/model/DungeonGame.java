@@ -290,12 +290,14 @@ public class DungeonGame implements Dungeon {
     Location selectedLocation = dungeon.get(row).get(column);
     Location playerLocation = player.getAtLocation();
 
-    if(playerLocation.getIsConnectedToLoc().contains(selectedLocation)) {
-      return playerLocation.getHasConnectionAt().
-              get(playerLocation.getIsConnectedToLoc().indexOf(selectedLocation));
-    } else {
-      return Direction.ZERO;
+    if(playerLocation.getConnectedDirLoc().containsValue(selectedLocation)) {
+      for(Map.Entry<Direction, Location> dirloc: playerLocation.getConnectedDirLoc().entrySet()) {
+        if(dirloc.getValue().equals(selectedLocation)) {
+          return dirloc.getKey();
+        }
+      }
     }
+    return Direction.ZERO;
   }
 
 
@@ -405,7 +407,7 @@ public class DungeonGame implements Dungeon {
       if (removed == getEndLoc()) {
         return removed.getLevel();
       } else {
-        for (Location l : removed.getIsConnectedToLoc()) {
+        for (Location l : removed.getConnectedDirLoc().values()) {
           if (!l.getIsTraversed()) {
             l.setLevel(removed.getLevel() + 1);
             l.hasTraversed();
@@ -496,8 +498,8 @@ public class DungeonGame implements Dungeon {
         l1.updateConnection(l2, isWrapping, dungeonRow, dungeonCol);
         l2.updateConnection(l1, isWrapping, dungeonRow, dungeonCol);
 
-        int l1ConnSize = l1.getIsConnectedToLoc().size();
-        int l2ConnSize = l2.getIsConnectedToLoc().size();
+        int l1ConnSize = l1.getConnectedDirLoc().values().size();
+        int l2ConnSize = l2.getConnectedDirLoc().values().size();
         if (l1ConnSize == 1) {
           l1.updateConnectionId(l2.getConnectionId());
         } else if (l2ConnSize == 1) {

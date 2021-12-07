@@ -2,17 +2,13 @@ package dungeon.model;
 
 import org.javatuples.Pair;
 
-import java.util.List;
-import java.util.Map;
-import random.Randomizer;
-
 /**
  * Interface that declares functions and operations performed on the {@link Dungeon}.
  * When building and using it for the Game.
  */
 public interface Dungeon extends ReadOnlyDungeon {
 
-  Direction getValidDirectionOfLocationAt(int row, int column);
+  Object getValidDirectionOfLocationAt(int row, int column);
 
   /**
    * Method to set the player at the start location of the dungeon.

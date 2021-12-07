@@ -51,7 +51,7 @@ public class DungeonViewController extends JFrame implements Features {
 
   @Override
   public Direction getValidDirectionOfLocationAt(int row, int col) {
-    return model.getValidDirectionOfLocationAt(row, col);
+    return ((Direction) model.getValidDirectionOfLocationAt(row, col));
   }
 
   @Override

@@ -244,7 +244,7 @@ public class PlayerImpl implements Player {
       }
     }
 
-    for (Location l : atLocation.getIsConnectedToLoc()) {
+    for (Location l : atLocation.getConnectedDirLoc().values()) {
       if (l.getOtyugh().getQuantity() > 0) {
         otyughCount++;
       }
@@ -257,8 +257,8 @@ public class PlayerImpl implements Player {
       }
     }
 
-    for (Location l : atLocation.getIsConnectedToLoc()) {
-      for (Location tempLoc : l.getIsConnectedToLoc()) {
+    for (Location l : atLocation.getConnectedDirLoc().values()) {
+      for (Location tempLoc : l.getConnectedDirLoc().values()) {
         if (tempLoc.getOtyugh().getQuantity() > 0) {
           otyughCount++;
         }

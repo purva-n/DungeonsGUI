@@ -1,6 +1,7 @@
 package dungeon.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -19,8 +20,9 @@ public class Location {
   private final int rowNum;
   private final int columnNum;
   private int id;
-  private final Set<Direction> hasConnectionAt;
-  private final List<Location> isConnectedToLoc;
+  //private final Set<Direction> hasConnectionAt;
+  //private final List<Location> isConnectedToLoc;
+  private Map<Direction, Location> connectedDirLoc;
   private LocationType type;
   private final List<EntityInLocation> entitiesInLoc;
   private static int count;
@@ -40,10 +42,11 @@ public class Location {
     this.columnNum = col;
     this.entitiesInLoc = new ArrayList<>(3);   //restrict adding more elements to list
     this.id = count++ % (DungeonGame.dungeonRow * DungeonGame.dungeonCol);
-    this.hasConnectionAt = new HashSet<>();
+    //this.hasConnectionAt = new HashSet<>();
     this.type = LocationType.CAVE;
 
-    this.isConnectedToLoc = new ArrayList<>();
+    //this.isConnectedToLoc = new ArrayList<>();
+    this.connectedDirLoc = new HashMap<>();
     this.isTraversed = false;
 
     this.entitiesInLoc.add(new Treasure());
@@ -57,10 +60,10 @@ public class Location {
     this.rowNum = loc.getR();
     this.columnNum = loc.getC();
     this.entitiesInLoc = loc.getEntitiesInLoc();
-    this.hasConnectionAt = new HashSet<>();
-    this.hasConnectionAt.addAll(loc.getHasConnectionAt());
+    //this.hasConnectionAt = new HashSet<>();
+    //this.hasConnectionAt.addAll(loc.getHasConnectionAt());
 
-    this.isConnectedToLoc = loc.getIsConnectedToLoc();
+    //this.isConnectedToLoc = loc.getIsConnectedToLoc();
     this.isTraversed = loc.getIsTraversed();
     this.type = loc.getType();
   }
@@ -148,7 +151,7 @@ public class Location {
 
   public List<Direction> getHasConnectionAt() {
     List<Direction> connections = new ArrayList<>();
-    connections.addAll(hasConnectionAt);
+    connections.addAll(connectedDirLoc.keySet());
 
     return connections;
   }
@@ -173,17 +176,21 @@ public class Location {
 
   private void updateConnectionNorthSouth(Location other) {
     if (this.rowNum < other.getR()) {
-      hasConnectionAt.add(Direction.SOUTH);
+      //hasConnectionAt.add(Direction.SOUTH);
+      connectedDirLoc.put(Direction.SOUTH, other);
     } else {
-      hasConnectionAt.add(Direction.NORTH);
+      //hasConnectionAt.add(Direction.NORTH);
+      connectedDirLoc.put(Direction.NORTH, other);
     }
   }
 
   private void updateConnectionEastWest(Location other) {
     if (this.columnNum < other.getC()) {
-      hasConnectionAt.add(Direction.EAST);
+      //hasConnectionAt.add(Direction.EAST);
+      connectedDirLoc.put(Direction.EAST, other);
     } else {
-      hasConnectionAt.add(Direction.WEST);
+      //hasConnectionAt.add(Direction.WEST);
+      connectedDirLoc.put(Direction.WEST, other);
     }
   }
 
@@ -192,9 +199,11 @@ public class Location {
     if (this.rowNum != other.getR()) {
       if (isWrap) {
         if (other.getR() - this.rowNum == drow - 1) {
-          hasConnectionAt.add(Direction.NORTH);
+          //hasConnectionAt.add(Direction.NORTH);
+           connectedDirLoc.put(Direction.NORTH, other);
         } else if (this.rowNum - other.getR() == drow - 1) {
-          hasConnectionAt.add(Direction.SOUTH);
+          //hasConnectionAt.add(Direction.SOUTH);
+          connectedDirLoc.put(Direction.SOUTH, other);
         } else {
           updateConnectionNorthSouth(other);
         }
@@ -206,9 +215,11 @@ public class Location {
     if (this.columnNum != other.getC()) {
       if (isWrap) {
         if (other.getC() - this.columnNum == dcol - 1) {
-          hasConnectionAt.add(Direction.WEST);
+          //hasConnectionAt.add(Direction.WEST);
+          connectedDirLoc.put(Direction.WEST, other);
         } else if (this.columnNum - other.getC() == dcol - 1) {
-          hasConnectionAt.add(Direction.EAST);
+          //hasConnectionAt.add(Direction.EAST);
+          connectedDirLoc.put(Direction.EAST, other);
         } else {
           updateConnectionEastWest(other);
         }
@@ -217,12 +228,12 @@ public class Location {
       }
     }
 
-    updateConnectedToLoc(other);
+    //updateConnectedToLoc(other);
   }
 
   void updateConnectionId(int id) {
     this.id = id;
-    for (Location l : this.getIsConnectedToLoc()) {
+    for (Location l : connectedDirLoc.values()) {
       if (l.getConnectionId() != id) {
         l.updateConnectionId(id);
       }
@@ -233,13 +244,13 @@ public class Location {
     return id;
   }
 
-  private void updateConnectedToLoc(Location l) {
-    isConnectedToLoc.add(l);
-  }
+//  private void updateConnectedToLoc(Location l) {
+//    isConnectedToLoc.add(l);
+//  }
 
-  public List<Location> getIsConnectedToLoc() {
-    return isConnectedToLoc;
-  }
+//  public List<Location> getIsConnectedToLoc() {
+//    return isConnectedToLoc;
+//  }
 
   void updateLocationType() {
     type = LocationType.TUNNEL;
@@ -284,6 +295,10 @@ public class Location {
     return hasPlayer;
   }
 
+  public Map<Direction, Location> getConnectedDirLoc() {
+    return new HashMap<>(connectedDirLoc);
+  }
+
   @Override
   public String toString() {
     StringBuilder locInfo = new StringBuilder();
@@ -314,28 +329,6 @@ public class Location {
   }
 
   Location getLocationAt(Direction d) {
-    Location location = this;
-    switch (d.name().substring(0, 1)) {
-      case "N":
-      case "S":
-        location = getIsConnectedToLoc().stream()
-                .filter(l -> l.getR() == (((this.getR() + d.getRow()) < 0
-                        ? (DungeonGame.dungeonRow + (this.getR() + d.getRow()))
-                        : (this.getR() + d.getRow())) % DungeonGame.dungeonRow))
-                .findFirst().orElse(this);
-        break;
-      case "E":
-      case "W":
-        location = getIsConnectedToLoc().stream()
-                .filter(l -> l.getC() == (((this.getC() + d.getColumn()) < 0
-                        ? (DungeonGame.dungeonCol + (this.getC() + d.getColumn()))
-                        : (this.getC() + d.getColumn())) % DungeonGame.dungeonCol))
-                .findFirst().orElse(this);
-        break;
-      default:
-        throw new IllegalArgumentException("Wrong direction");
-    }
-
-    return location;
+    return connectedDirLoc.get(d);
   }
 }
