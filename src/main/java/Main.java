@@ -24,11 +24,11 @@ public class Main {
    */
   public static void main(String[] args) throws IOException {
 
-    Dungeon dungeonQuest = new DungeonGame();
+    Dungeon dungeonQuest = new DungeonGame(rnd);
 
     // Create the model
     DungeonView view = new DungeonSwingView(dungeonQuest);
-    Dungeon model = new DungeonGame();
+    Dungeon model = new DungeonGame(rnd);
 
     // Create the controller with the model
     Features controller = new DungeonViewController(view, model);

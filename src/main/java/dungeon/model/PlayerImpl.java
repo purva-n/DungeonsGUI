@@ -230,6 +230,7 @@ public class PlayerImpl implements Player {
 
     if (atLocation.getPit().getQuantity() > 0) {
       isAlive = false;
+      //atLocation.setPlayer(null, rnd);
       return new Pair<>(SmellFactor.NO_SMELL, WindFactor.IN_PIT);
     }
     if (atLocation.getOtyugh().getQuantity() > 0) {
@@ -240,6 +241,7 @@ public class PlayerImpl implements Player {
         }
       } else {
         isAlive = false;
+        //atLocation.setPlayer(null, rnd);
         return new Pair<>(SmellFactor.WITH_OTYUGH_DEAD, WindFactor.NO_WIND);
       }
     }

@@ -2,16 +2,18 @@ package dungeon.controller;
 
 import org.javatuples.Pair;
 
+import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.swing.*;
 
 import dungeon.model.Direction;
 import dungeon.model.Dungeon;
-import dungeon.model.SmellFactor;
-import dungeon.model.WindFactor;
 import dungeon.view.DungeonView;
-import random.TrueRandom;
+import dungeon.view.KeyBoardListener;
+
 
 public class DungeonViewController extends JFrame implements Features {
 
@@ -26,6 +28,25 @@ public class DungeonViewController extends JFrame implements Features {
 
     this.model = model;
     this.view = view;
+    configureKeyBoardListener();
+  }
+
+  private void configureKeyBoardListener() {
+    Map<Character, Runnable> keyTypes = new HashMap<>();
+    Map<Integer, Runnable> keyPresses = new HashMap<>();
+    Map<Integer, Runnable> keyReleases = new HashMap<>();
+
+    keyPresses.put(KeyEvent.VK_S, () -> {
+      String distance = view.addPopup();
+      System.out.println(model.makePlayerShoot("S", distance));
+    });
+
+    KeyBoardListener kbd = new KeyBoardListener();
+    kbd.setKeyTypedMap(keyTypes);
+    kbd.setKeyPressedMap(keyPresses);
+    kbd.setKeyReleasedMap(keyReleases);
+
+    view.addKeyListener(kbd);
   }
 
   @Override

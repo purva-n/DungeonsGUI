@@ -12,8 +12,10 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import dungeon.model.Location;
 import dungeon.model.ReadOnlyDungeon;
 import dungeon.model.SmellFactor;
+import dungeon.model.TreasureType;
 import dungeon.model.WindFactor;
 
 public class DungeonPanel extends JPanel {
@@ -29,21 +31,37 @@ public class DungeonPanel extends JPanel {
   @Override
   public void paintComponent(Graphics g) {
     ImageIcon finalImage;
-    BufferedImage superImposedSmell;
     File cell;
     for (int i = 0; i < dungeon.getDimensionRow(); i++) {
       for (int j = 0; j < dungeon.getDimensionColumn(); j++) {
         try {
-          if(dungeon.getLocationAt(i, j).getIsTraversed()) {
+          Location current = dungeon.getLocationAt(i, j);
+          if (current.getIsTraversed()) {
             JLabel loc = (JLabel) this.getClientProperty(i + " " + j);
             String imageName = getImageNameOfCell(i, j);
             cell = new File("./dungeon-images/dungeon-images/color-cells/"
                     + imageName + ".png");
             finalImage = new ImageIcon(ImageIO.read(cell));
 
-            if(dungeon.hasPlayerAt(i, j)) {
+            if (dungeon.hasPlayerAt(i, j)) {
               File player = new File("./dungeon-images/dungeon-images/player.png");
-              BufferedImage superImposedPlayer = superImpose(cell, player, 0,0);
+              BufferedImage superImposedPlayer = superImpose(cell, player, 15, 10);
+
+              if (current.getOtyugh().getQuantity() > 0) {
+                superImposedPlayer = overlay(superImposedPlayer,
+                        "./dungeon-images/dungeon-images/otyugh.png", 5);
+              }
+
+              if (current.getArrow().getQuantity() > 0) {
+                superImposedPlayer = overlay(superImposedPlayer,
+                        "./dungeon-images/dungeon-images/arrow-white.png", 20);
+              }
+
+//              if(current.getTreasure().getQuantity() > 0) {
+//                for(current.getTreasure().getStones().get(TreasureType.RUBY) > 0)
+//                superImposedPlayer = overlay(superImposedPlayer,
+//                        "./dungeon-images/dungeon-images/arrow-white.png", 3);
+//              }
 
               Pair<SmellFactor, WindFactor> sense = dungeon.getPlayerSenseFactor();
 
@@ -51,22 +69,24 @@ public class DungeonPanel extends JPanel {
                 case LESS_PUNGENT:
                   superImposedPlayer =
                           overlay(superImposedPlayer,
-                                  "./dungeon-images/dungeon-images/stench01.png", 2);
+                                  "./dungeon-images/dungeon-images/stench01.png",
+                                  2);
                   break;
                 case MORE_PUNGENT:
                   superImposedPlayer =
                           overlay(superImposedPlayer,
-                                  "./dungeon-images/dungeon-images/stench02.png", 2);
+                                  "./dungeon-images/dungeon-images/stench02.png",
+                                  2);
                   break;
                 case WITH_OTYUGH_DEAD:
                 case WITH_OTYUGH_SAVED:
                   superImposedPlayer =
                           overlay(superImposedPlayer,
-                                  "./dungeon-images/dungeon-images/otyugh.png", 2);
+                                  "./dungeon-images/dungeon-images/otyugh.png",
+                                  2);
                   break;
                 case NO_SMELL:
                   break;
-
               }
               finalImage = new ImageIcon(superImposedPlayer);
             }
@@ -104,10 +124,11 @@ public class DungeonPanel extends JPanel {
 
   /**
    * Combines two images into one image by superimposing one over the other.
+   *
    * @param baseImagePath The path to the base image.
-   * @param topImagePath The path to the final image.
-   * @param xOffset The x offset for the top image.
-   * @param yOffset The y offset for the top image.
+   * @param topImagePath  The path to the final image.
+   * @param xOffset       The x offset for the top image.
+   * @param yOffset       The y offset for the top image.
    * @return The superimposed image.
    * @throws IOException
    */
@@ -136,7 +157,7 @@ public class DungeonPanel extends JPanel {
    *
    * @param starting The base image. This is the image that needs to have another image layered over it.
    * @param fpath    The path of the image that should be superimposed i.e. the image on top of the base image.
-   * @param offset   The offset by which the top image should be superimposed on the base image.
+   * @param offset   The x offset by which the top image should be superimposed on the base image.
    * @return The combined image where the image in 'fpath' is superimposed on top of the image in 'starting'
    * @throws IOException Thrown when fpath is not found?
    */

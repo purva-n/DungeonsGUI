@@ -2,7 +2,6 @@ package dungeon.view;
 
 import java.awt.*;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -259,7 +258,7 @@ public class DungeonSwingView extends JFrame implements DungeonView {
           MouseListener ml = new MyMouseAdapter(controller);
           tempLabel.addMouseListener(ml);
           tempLabel.setName(i + " " + j);
-          tempLabel.setPreferredSize(new Dimension(150,150));
+          tempLabel.setSize(new Dimension(250,250));
           panel.add(tempLabel, gbc);
           panel.putClientProperty(i + " " + j, tempLabel);
         } catch (IOException ioe) {
@@ -284,5 +283,16 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   public void resetFocus() {
     this.setFocusable(true);
     this.requestFocus();
+  }
+
+  @Override
+  public void shootOtyugh() {
+
+  }
+
+  @Override
+  public String addPopup() {
+    PopupPanel popup = new PopupPanel();
+    return popup.getDistance();
   }
 }

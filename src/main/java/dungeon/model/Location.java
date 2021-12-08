@@ -129,8 +129,8 @@ public class Location {
    * @param player {@link Player} to be positioned at this Location.
    */
   void setPlayer(Player player, Randomizer rnd) {
-    this.player = player;
     player.setLocation(this, rnd);
+    this.player = player;
   }
 
   public Treasure getTreasure() {
@@ -322,10 +322,6 @@ public class Location {
     }
 
     return locInfo.toString();
-  }
-
-  public String getRowCol() {
-    return "R:" + rowNum + " C:" + columnNum;
   }
 
   Location getLocationAt(Direction d) {

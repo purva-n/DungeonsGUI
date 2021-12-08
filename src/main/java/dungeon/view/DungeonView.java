@@ -1,5 +1,6 @@
 package dungeon.view;
 
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -56,4 +57,10 @@ public interface DungeonView {
   void clearPanel();
 
   void resetFocus();
+
+  void shootOtyugh();
+
+  String addPopup();
+
+  void addKeyListener(KeyListener listener);
 }

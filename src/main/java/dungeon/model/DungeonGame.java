@@ -34,8 +34,9 @@ public class DungeonGame implements Dungeon {
   private boolean gameStarted;
   private Randomizer rnd;
 
-  public DungeonGame() {
+  public DungeonGame(Randomizer rnd) {
     gameStarted = false;
+    this.rnd = rnd;
   }
 
   /**
@@ -368,22 +369,22 @@ public class DungeonGame implements Dungeon {
 
   @Override
   public Pair<SmellFactor, WindFactor> movePlayer(String direction) {
-    if (!player.checkValidDirection(direction)) {
-      throw new IllegalArgumentException("Select from possible moves. try again!");
-    }
+      if (!player.checkValidDirection(direction)) {
+        throw new IllegalArgumentException("Select from possible moves. try again!");
+      }
 
-    switch (direction) {
-      case "N":
-        return player.moveToLocation(rnd, Direction.NORTH, isWrapping);
-      case "S":
-        return player.moveToLocation(rnd, Direction.SOUTH, isWrapping);
-      case "E":
-        return player.moveToLocation(rnd, Direction.EAST, isWrapping);
-      case "W":
-        return player.moveToLocation(rnd, Direction.WEST, isWrapping);
-      default:
-        throw new IllegalArgumentException("Invalid direction");
-    }
+      switch (direction) {
+        case "N":
+          return player.moveToLocation(rnd, Direction.NORTH, isWrapping);
+        case "S":
+          return player.moveToLocation(rnd, Direction.SOUTH, isWrapping);
+        case "E":
+          return player.moveToLocation(rnd, Direction.EAST, isWrapping);
+        case "W":
+          return player.moveToLocation(rnd, Direction.WEST, isWrapping);
+        default:
+          throw new IllegalArgumentException("Invalid direction");
+      }
   }
 
   @Override
