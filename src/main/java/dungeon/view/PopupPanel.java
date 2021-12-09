@@ -29,7 +29,6 @@ public class PopupPanel {
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
 
-    ok.addActionListener(l -> view.setDistance(distance.getText()));
   }
 
   public String getDistance() {
