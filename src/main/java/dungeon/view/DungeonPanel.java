@@ -21,11 +21,13 @@ import dungeon.model.WindFactor;
 public class DungeonPanel extends JPanel {
 
   private final ReadOnlyDungeon dungeon;
+  private final File player;
   //private JLabel[][] dungeonGrid;
 
   DungeonPanel(ReadOnlyDungeon dungeon) {
     this.dungeon = dungeon;
     //setLayout(new GridLayout(dungeon.getDimensionRow(),dungeon.getDimensionColumn()));
+    player = new File("./dungeon-images/dungeon-images/player.png");
   }
 
   @Override
@@ -46,7 +48,7 @@ public class DungeonPanel extends JPanel {
             finalImage = new ImageIcon(ImageIO.read(cell));
 
             if (dungeon.hasPlayerAt(i, j)) {
-              File player = new File("./dungeon-images/dungeon-images/player.png");
+
               BufferedImage superImposedPlayer = superImpose(cell, player, 15, 10);
 
               if (current.getOtyugh().getQuantity() > 0) {
@@ -150,7 +152,7 @@ public class DungeonPanel extends JPanel {
    * @param starting The base image. This is the image that needs to have another image layered over it.
    * @param fpath    The path of the image that should be superimposed i.e. the image on top of the base image.
    * @param offsetx   The x offset by which the top image should be superimposed on the base image.
-   * @param offsetx   The x offset by which the top image should be superimposed on the base image.
+   * @param offsety   The x offset by which the top image should be superimposed on the base image.
    * @return The combined image where the image in 'fpath' is superimposed on top of the image in 'starting'
    * @throws IOException Thrown when fpath is not found?
    */

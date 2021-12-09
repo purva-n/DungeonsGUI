@@ -69,4 +69,6 @@ public interface DungeonView {
   void setDistance(String text);
 
   void pick();
+
+  void errorPopup(String message);
 }

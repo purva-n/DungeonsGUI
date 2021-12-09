@@ -148,7 +148,7 @@ public class DungeonConsoleController implements DungeonController {
 
   private void move(Dungeon dungeonGame, String direction, Appendable out, Randomizer rnd)
           throws IOException {
-    SmellFactor senseFactor = SmellFactor.NO_SMELL;
+    SmellFactor senseFactor;
     try {
       senseFactor = dungeonGame.movePlayer(direction);
 

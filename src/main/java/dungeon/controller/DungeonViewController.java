@@ -20,6 +20,8 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
   private final DungeonView view;
   boolean pick = false;
   boolean shoot = false;
+  boolean directionSet = false;
+  String direction = "Z";
 
   public DungeonViewController(DungeonView view, Dungeon model) {
     if (view == null || model == null) {
@@ -122,9 +124,9 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
   @Override
   public void processIsWrap() {
     String isWrap = view.getIsWrap();
-    if(isWrap.equals("Y") || isWrap.equals("y")) {
+    if (isWrap.equals("Y") || isWrap.equals("y")) {
       model.setIsWrap(true);
-    } else if(isWrap.equals("N") || isWrap.equals("n")) {
+    } else if (isWrap.equals("N") || isWrap.equals("n")) {
       model.setIsWrap(false);
     } else {
       // view.popup
@@ -172,63 +174,116 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
 
   @Override
   public void keyTyped(KeyEvent e) {
+    if (directionSet) {
+      try {
+        switch (e.getKeyChar()) {
+          case '1':
+            model.makePlayerShoot(direction, "1");
+            break;
+          case '2':
+            model.makePlayerShoot(direction, "2");
+            break;
+          case '3':
+            model.makePlayerShoot(direction, "3");
+            break;
+          case '4':
+            model.makePlayerShoot(direction, "4");
+            break;
+          case '5':
+            model.makePlayerShoot(direction, "5");
+            break;
+          default:
+            //do nothing
+        }
 
+      } catch (IllegalArgumentException ex) {
+        // do nothing
+      }
+      directionSet = false;
+      shoot = false;
+      view.refresh();
+    }
   }
 
   @Override
   public void keyPressed(KeyEvent e) {
     System.out.println(e.getKeyCode());
 
-    if(e.getKeyCode() == VK_P) {
+    if (e.getKeyCode() == VK_P) {
       pick = true;
     }
 
-    if(e.getKeyCode() == KeyEvent.VK_S) {
+    if (e.getKeyCode() == KeyEvent.VK_S) {
       shoot = true;
     }
   }
 
   @Override
   public void keyReleased(KeyEvent e) {
-    System.out.println(e.getKeyCode());
-
-    if(pick) {
-      switch (e.getKeyCode()) {
-        case VK_A:
-          model.makePlayerCollectArrow();
-          break;
-        case KeyEvent.VK_D:
-          model.makePlayerCollectTreasure("diamond");
-          break;
-        case KeyEvent.VK_R:
-          model.makePlayerCollectTreasure("ruby");
-          break;
-        case KeyEvent.VK_S:
-          model.makePlayerCollectTreasure("sapphire");
-          break;
-        default:
-          //do nothing
+    if (pick) {
+      try {
+        switch (e.getKeyCode()) {
+          case VK_A:
+            model.makePlayerCollectArrow();
+            break;
+          case KeyEvent.VK_D:
+            model.makePlayerCollectTreasure("diamond");
+            break;
+          case KeyEvent.VK_R:
+            model.makePlayerCollectTreasure("ruby");
+            break;
+          case KeyEvent.VK_S:
+            model.makePlayerCollectTreasure("sapphire");
+            break;
+          default:
+            //do nothing
+        }
+      } catch (IllegalStateException ex) {
+        view.errorPopup(ex.getMessage());
       }
 
       pick = false;
       view.refresh();
     }
 
+    if (shoot) {
+      switch (e.getKeyCode()) {
+        case KeyEvent.VK_DOWN:
+          direction = Direction.SOUTH.name().substring(0, 1);
+          directionSet = true;
+          break;
+        case KeyEvent.VK_LEFT:
+          direction = Direction.WEST.name().substring(0, 1);
+          directionSet = true;
+          break;
+        case KeyEvent.VK_RIGHT:
+          direction = Direction.EAST.name().substring(0, 1);
+          directionSet = true;
+          break;
+        case KeyEvent.VK_UP:
+          direction = Direction.NORTH.name().substring(0, 1);
+          directionSet = true;
+          break;
+        default:
+          direction = Direction.ZERO.name().substring(0, 1);
+          directionSet = false;
+      }
+    } else {
+      if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+        move("S");
+      }
 
-    if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-      move("S");
-    }
+      if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+        move("W");
+      }
 
-    if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-      move("W");
-    }
+      if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        move("E");
+      }
 
-    if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-      move("E");
-    }
-
-    if(e.getKeyCode() == KeyEvent.VK_UP) {
-      move("N");
+      if (e.getKeyCode() == KeyEvent.VK_UP) {
+        move("N");
+      }
     }
   }
 }

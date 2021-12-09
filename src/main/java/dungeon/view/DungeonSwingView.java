@@ -44,8 +44,9 @@ public class DungeonSwingView extends JFrame implements DungeonView {
 
   public DungeonSwingView(ReadOnlyDungeon dungeon) {
 
-    setSize(450, 550);
+    setSize(650, 550);
     setLocation(200, 200);
+    getContentPane().setBackground(new Color(0, 0, 0));
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     startQuest = new JButton("Start");
@@ -112,9 +113,13 @@ public class DungeonSwingView extends JFrame implements DungeonView {
     this.dungeon = dungeon;
     dungeonPanel = new DungeonPanel(dungeon);
     locationPanel = new LocationPanel(dungeon);
+    locationPanel.setBackground(new Color(0, 0, 0));
+
     JScrollPane scrollableDungeon = new JScrollPane(dungeonPanel);
-    this.add(scrollableDungeon, BorderLayout.NORTH);
+    scrollableDungeon.setBackground(new Color(0, 0, 0));
+    this.add(scrollableDungeon, BorderLayout.CENTER);
     this.add(locationPanel, BorderLayout.SOUTH);
+
     JLabel caveEntities = new JLabel();
     caveEntities.setSize(500, 300);
     caveEntities.setName("baseImage");
@@ -321,6 +326,11 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   @Override
   public void pick() {
 
+  }
+
+  @Override
+  public void errorPopup(String message) {
+    ErrorPopup errorPopup = new ErrorPopup(message);
   }
 
 

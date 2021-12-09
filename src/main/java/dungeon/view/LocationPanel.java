@@ -42,21 +42,29 @@ public class LocationPanel extends JPanel {
         Location playerLoc = dungeon.getPlayerLocation();
 
         if (playerLoc.getArrow().getQuantity() > 0) {
-          finalImage = DungeonPanel.overlay(finalImage, arrow.getPath() , 40, 40);
+          finalImage = DungeonPanel.overlay(finalImage, arrow.getPath(), 40, 40);
         }
 
         if (playerLoc.getTreasure().getQuantity() > 0) {
           Map<TreasureType, Integer> treasures = playerLoc.getTreasure().getStones();
           if (treasures.containsKey(TreasureType.RUBY)) {
-            finalImage = DungeonPanel.overlay(finalImage, ruby.getPath(), 70, 40);
+            if (treasures.get(TreasureType.RUBY) > 0) {
+              finalImage = DungeonPanel.overlay(finalImage, ruby.getPath(), 70, 40);
+            }
           }
 
           if (treasures.containsKey(TreasureType.DIAMOND)) {
-            finalImage = DungeonPanel.overlay(finalImage, diamond.getPath(), 110, 40);
+            if(treasures.get(TreasureType.DIAMOND) > 0) {
+              finalImage = DungeonPanel.overlay(finalImage, diamond.getPath(), 110,
+                      40);
+            }
           }
 
           if (treasures.containsKey(TreasureType.SAPPHIRE)) {
-            finalImage = DungeonPanel.overlay(finalImage, sapphire.getPath(), 150, 40);
+            if(treasures.get(TreasureType.SAPPHIRE) > 0) {
+              finalImage = DungeonPanel.overlay(finalImage, sapphire.getPath(), 150,
+                      40);
+            }
           }
         }
 
