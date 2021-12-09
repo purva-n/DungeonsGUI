@@ -1,7 +1,5 @@
 package dungeon.model;
 
-import org.javatuples.Pair;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import random.Randomizer;
-import random.TrueRandom;
 
 /**
  * DungeonGame is the Implementation for the interface {@link Dungeon} which represents functions.

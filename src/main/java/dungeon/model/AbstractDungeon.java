@@ -1,10 +1,7 @@
 package dungeon.model;
 
-import org.javatuples.Pair;
-
 import java.util.List;
 import java.util.Map;
-import random.Randomizer;
 
 /**
  * Abstract class that implements {@link Dungeon}.

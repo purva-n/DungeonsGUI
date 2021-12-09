@@ -8,11 +8,10 @@ import javax.swing.*;
 
 import dungeon.model.Direction;
 import dungeon.model.Dungeon;
+import dungeon.model.SmellFactor;
 import dungeon.view.DungeonView;
 
-import static java.awt.event.KeyEvent.VK_A;
 import static java.awt.event.KeyEvent.VK_P;
-
 
 public class DungeonViewController extends JFrame implements Features, KeyListener {
 
@@ -34,27 +33,30 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
 
   @Override
   public void shootOtyugh(String direction, String caveDistance) {
-
+    model.makePlayerShoot(direction, caveDistance);
   }
 
   @Override
   public void pickTreasure(String stone) {
-
+    model.makePlayerCollectTreasure(stone);
   }
 
   @Override
   public void pickArrow() {
-
+    model.makePlayerCollectArrow();
   }
 
   @Override
-  public void move(String direction) {
+  public SmellFactor move(String direction) {
+    SmellFactor smell = SmellFactor.NO_SMELL;
     try {
-      model.movePlayer(direction);
+      smell = model.movePlayer(direction);
       view.refresh();
     } catch (IllegalArgumentException | IllegalStateException e) {
       //do nothing
     }
+
+    return smell;
   }
 
   @Override
@@ -77,7 +79,7 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
   @Override
   public void playGame() {
     view.setFeatures(this, this);
-    view.makeVisible();
+    view.makeVisible(true);
   }
 
   @Override
@@ -178,19 +180,19 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
       try {
         switch (e.getKeyChar()) {
           case '1':
-            model.makePlayerShoot(direction, "1");
+            shootOtyugh(direction, "1");
             break;
           case '2':
-            model.makePlayerShoot(direction, "2");
+            shootOtyugh(direction, "2");
             break;
           case '3':
-            model.makePlayerShoot(direction, "3");
+            shootOtyugh(direction, "3");
             break;
           case '4':
-            model.makePlayerShoot(direction, "4");
+            shootOtyugh(direction, "4");
             break;
           case '5':
-            model.makePlayerShoot(direction, "5");
+            shootOtyugh(direction, "5");
             break;
           default:
             //do nothing
@@ -207,8 +209,6 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
 
   @Override
   public void keyPressed(KeyEvent e) {
-    System.out.println(e.getKeyCode());
-
     if (e.getKeyCode() == VK_P) {
       pick = true;
     }
@@ -220,20 +220,21 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
 
   @Override
   public void keyReleased(KeyEvent e) {
+    SmellFactor smellFactor = SmellFactor.NO_SMELL;
     if (pick) {
       try {
         switch (e.getKeyCode()) {
-          case VK_A:
-            model.makePlayerCollectArrow();
+          case KeyEvent.VK_A:
+            pickArrow();
             break;
           case KeyEvent.VK_D:
-            model.makePlayerCollectTreasure("diamond");
+            pickTreasure("diamond");
             break;
           case KeyEvent.VK_R:
-            model.makePlayerCollectTreasure("ruby");
+            pickTreasure("ruby");
             break;
-          case KeyEvent.VK_S:
-            model.makePlayerCollectTreasure("sapphire");
+          case KeyEvent.VK_E:
+            pickTreasure("sapphire");
             break;
           default:
             //do nothing
@@ -270,19 +271,23 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
       }
     } else {
       if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-        move("S");
+        smellFactor = move("S");
       }
 
       if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-        move("W");
+        smellFactor = move("W");
       }
 
       if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-        move("E");
+        smellFactor = move("E");
       }
 
       if (e.getKeyCode() == KeyEvent.VK_UP) {
-        move("N");
+        smellFactor = move("N");
+      }
+
+      if(smellFactor == SmellFactor.WITH_OTYUGH_DEAD) {
+       view.makeVisible(false);
       }
     }
   }

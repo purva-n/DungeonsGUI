@@ -1,7 +1,5 @@
 package dungeon.model;
 
-import org.javatuples.Pair;
-
 import java.util.List;
 import java.util.Map;
 

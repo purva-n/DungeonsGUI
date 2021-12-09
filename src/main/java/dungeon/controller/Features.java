@@ -3,6 +3,7 @@ package dungeon.controller;
 import java.awt.event.KeyListener;
 
 import dungeon.model.Direction;
+import dungeon.model.SmellFactor;
 
 public interface Features {
 
@@ -12,7 +13,7 @@ public interface Features {
 
   void pickArrow();
 
-  void move(String direction);
+  SmellFactor move(String direction);
 
   Direction getValidDirectionOfLocationAt(int row, int col);
 

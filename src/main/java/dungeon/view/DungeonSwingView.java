@@ -12,7 +12,6 @@ import javax.swing.*;
 
 import dungeon.controller.DungeonViewController;
 import dungeon.controller.Features;
-import dungeon.model.Location;
 import dungeon.model.ReadOnlyDungeon;
 
 public class DungeonSwingView extends JFrame implements DungeonView {
@@ -32,6 +31,8 @@ public class DungeonSwingView extends JFrame implements DungeonView {
 
   private DungeonPanel dungeonPanel;
   private LocationPanel locationPanel;
+  private JPanel panel;
+  private JPanel playerInfoPanel;
   private JTextField rows;
   private JTextField columns;
   private JTextField interconnectivity;
@@ -111,21 +112,73 @@ public class DungeonSwingView extends JFrame implements DungeonView {
     this.dungeon = dungeon;
     dungeonPanel = new DungeonPanel(dungeon);
     locationPanel = new LocationPanel(dungeon);
-    locationPanel.setBackground(new Color(0, 0, 0));
 
+    playerInfoPanel = new PlayerInfoPanel(dungeon);
+    addPlayerInfoPanel();
+    this.add(playerInfoPanel, BorderLayout.EAST);
+
+
+    // https://www.javatpoint.com/java-jscrollpane
     JScrollPane scrollableDungeon = new JScrollPane(dungeonPanel);
     scrollableDungeon.setBackground(new Color(0, 0, 0));
     this.add(scrollableDungeon, BorderLayout.CENTER);
-    this.add(locationPanel, BorderLayout.SOUTH);
 
     JLabel caveEntities = new JLabel();
     caveEntities.setSize(500, 300);
     caveEntities.setName("baseImage");
     locationPanel.putClientProperty(caveEntities.getName(), caveEntities);
     locationPanel.add(caveEntities);
+    locationPanel.setBackground(new Color(0, 0, 0));
+    this.add(locationPanel, BorderLayout.SOUTH);
 
+  }
 
-    // https://www.javatpoint.com/java-jscrollpane
+  private void addPlayerInfoPanel() {
+    playerInfoPanel.setLayout(new GridBagLayout());
+    playerInfoPanel.setBackground(new Color(255, 255, 255));
+
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(1, 1, 1, 1);
+    gbc.weightx = 0;
+    gbc.weighty = 0;
+    gbc.fill = GridBagConstraints.NONE;
+
+    JLabel tempLabel;
+
+    for (int i = 0; i < 4; i++) {
+      gbc.gridx = i;
+      for (int j = 0; j < 2; j++) {
+        gbc.gridy = j;
+        tempLabel = new JLabel();
+        tempLabel.setName(i+""+j);
+        System.out.println(tempLabel.getName());
+        playerInfoPanel.putClientProperty(tempLabel.getName(), tempLabel);
+        playerInfoPanel.add(tempLabel, gbc);
+      }
+    }
+
+    try {
+      JLabel arrowl = ((JLabel) playerInfoPanel.getClientProperty("00"));
+      arrowl.setIcon(new ImageIcon(ImageIO.read(
+              new File("./dungeon-images/dungeon-images/arrow-white.png"))));
+
+      JLabel rubyl = ((JLabel) playerInfoPanel.getClientProperty("10"));
+      rubyl.setIcon(new ImageIcon(ImageIO.read(
+              new File("./dungeon-images/dungeon-images/ruby.png"))));
+
+      JLabel diamondl = ((JLabel) playerInfoPanel.getClientProperty("20"));
+      diamondl.setIcon(new ImageIcon(ImageIO.read(
+              new File("./dungeon-images/dungeon-images/diamond.png"))));
+
+      JLabel sapphirel = ((JLabel) playerInfoPanel.getClientProperty("30"));
+      sapphirel.setIcon(new ImageIcon(ImageIO.read(
+              new File("./dungeon-images/dungeon-images/sapphire.png"))));
+    } catch (IOException ex) {
+      // do nothing
+      ex.printStackTrace();
+    }
+
+    playerInfoPanel.repaint();
 
   }
 
@@ -144,8 +197,10 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   }
 
   @Override
-  public void makeVisible() {
-    this.setVisible(true);
+  public void makeVisible(boolean visible) {
+    this.setVisible(visible);
+//    dungeonPanel.setVisible(visible);
+//    locationPanel.setVisible(visible);
   }
 
   @Override
@@ -276,7 +331,7 @@ public class DungeonSwingView extends JFrame implements DungeonView {
           MouseListener ml = new MyMouseAdapter(controller);
           tempLabel.addMouseListener(ml);
           tempLabel.setName(i + " " + j);
-          tempLabel.setSize(new Dimension(250,250));
+          tempLabel.setSize(new Dimension(250, 250));
           dungeonPanel.add(tempLabel, gbc);
           dungeonPanel.putClientProperty(i + " " + j, tempLabel);
         } catch (IOException ioe) {

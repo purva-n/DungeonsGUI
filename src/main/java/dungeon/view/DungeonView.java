@@ -12,7 +12,7 @@ public interface DungeonView {
 
   void setFeatures(Features f, KeyListener keys);
 
-  void makeVisible();
+  void makeVisible(boolean visible);
 
   void refresh();
 

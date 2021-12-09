@@ -34,36 +34,36 @@ public class LocationPanel extends JPanel {
 
   @Override
   public void paintComponent(Graphics g) {
-    JLabel caveEntities = ((JLabel) this.getClientProperty("baseImage"));
     if (dungeon.gameBegin()) {
-      //this.removeAll();
+      JLabel caveEntities = ((JLabel) this.getClientProperty("baseImage"));
+
       try {
         BufferedImage finalImage = ImageIO.read(location);
         Location playerLoc = dungeon.getPlayerLocation();
 
         if (playerLoc.getArrow().getQuantity() > 0) {
-          finalImage = DungeonPanel.overlay(finalImage, arrow.getPath(), 40, 40);
+          finalImage = DungeonPanel.overlay(finalImage, arrow.getPath(), 40, 100);
         }
 
         if (playerLoc.getTreasure().getQuantity() > 0) {
           Map<TreasureType, Integer> treasures = playerLoc.getTreasure().getStones();
           if (treasures.containsKey(TreasureType.RUBY)) {
             if (treasures.get(TreasureType.RUBY) > 0) {
-              finalImage = DungeonPanel.overlay(finalImage, ruby.getPath(), 70, 40);
+              finalImage = DungeonPanel.overlay(finalImage, ruby.getPath(), 90, 100);
             }
           }
 
           if (treasures.containsKey(TreasureType.DIAMOND)) {
             if(treasures.get(TreasureType.DIAMOND) > 0) {
-              finalImage = DungeonPanel.overlay(finalImage, diamond.getPath(), 110,
-                      40);
+              finalImage = DungeonPanel.overlay(finalImage, diamond.getPath(), 160,
+                      100);
             }
           }
 
           if (treasures.containsKey(TreasureType.SAPPHIRE)) {
             if(treasures.get(TreasureType.SAPPHIRE) > 0) {
-              finalImage = DungeonPanel.overlay(finalImage, sapphire.getPath(), 150,
-                      40);
+              finalImage = DungeonPanel.overlay(finalImage, sapphire.getPath(), 210,
+                      100);
             }
           }
         }
