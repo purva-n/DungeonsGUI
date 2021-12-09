@@ -24,7 +24,7 @@ public abstract class AbstractDungeon implements Dungeon {
   public abstract int getInterconnectivity();
 
   @Override
-  public abstract Pair<SmellFactor, WindFactor> startQuest();
+  public abstract SmellFactor startQuest();
 
   @Override
   public List<Direction> getPlayerMoves() {
@@ -32,8 +32,8 @@ public abstract class AbstractDungeon implements Dungeon {
   }
 
   @Override
-  public Pair<SmellFactor, WindFactor> getPlayerSenseFactor() {
-    return new Pair<>(SmellFactor.NO_SMELL, WindFactor.NO_WIND);
+  public SmellFactor getPlayerSenseFactor() {
+    return SmellFactor.NO_SMELL;
   }
 
   @Override
@@ -65,8 +65,8 @@ public abstract class AbstractDungeon implements Dungeon {
   public abstract Location getEndLoc();
 
   @Override
-  public Pair<SmellFactor, WindFactor> movePlayer(String direction) {
-    return new Pair<>(SmellFactor.NO_SMELL, WindFactor.NO_WIND);
+  public SmellFactor movePlayer(String direction) {
+    return SmellFactor.NO_SMELL;
   }
 
   @Override

@@ -13,7 +13,7 @@ public interface Dungeon extends ReadOnlyDungeon {
    *
    * @return smell factor at the beginnig of the game before even moving.
    */
-  Pair<SmellFactor, WindFactor> startQuest();
+  SmellFactor startQuest();
 
   int makePlayerShoot(String direction, String distanceToShoot);
 
@@ -27,7 +27,7 @@ public interface Dungeon extends ReadOnlyDungeon {
    * @param direction {@link Direction} to move the player to.
    * @return smell factor from the {@link Otyugh} of the newly moved location.
    */
-  Pair<SmellFactor, WindFactor> movePlayer(String direction);
+  SmellFactor movePlayer(String direction);
 
   void setRow(Integer row);
 

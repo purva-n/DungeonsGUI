@@ -20,7 +20,7 @@ public class PlayerImpl implements Player {
   private Location atLocation;
   private int arrowsQuantity;
   private boolean isAlive;
-  private Pair<SmellFactor, WindFactor> senseFactor;
+  private SmellFactor senseFactor;
 
   /**
    * Constructor to construct the initial state of the PLayer before beginning the Game.
@@ -66,7 +66,7 @@ public class PlayerImpl implements Player {
   }
 
   @Override
-  public Pair<SmellFactor, WindFactor> moveToLocation(Randomizer rnd, Direction whichDirection,
+  public SmellFactor moveToLocation(Randomizer rnd, Direction whichDirection,
                                                       boolean isWrap) {
 
     if ((!atLocation.getHasConnectionAt().contains(whichDirection))) {
@@ -97,7 +97,7 @@ public class PlayerImpl implements Player {
               .get(currentCol + whichDirection.getColumn());
     }
     this.atLocation = null;
-    Pair<SmellFactor, WindFactor> senseFactor = this.setLocation(newLoc, rnd);
+    SmellFactor senseFactor = this.setLocation(newLoc, rnd);
     this.senseFactor = senseFactor;
 
     return senseFactor;
@@ -114,7 +114,7 @@ public class PlayerImpl implements Player {
   }
 
   @Override
-  public Pair<SmellFactor, WindFactor> setLocation(Location l, Randomizer rnd) {
+  public SmellFactor setLocation(Location l, Randomizer rnd) {
     this.atLocation = l;
     this.currentRow = l.getR();
     this.currentCol = l.getC();
@@ -224,64 +224,41 @@ public class PlayerImpl implements Player {
             + getArrowQuantity();
   }
 
-  private Pair<SmellFactor, WindFactor> checkSenseFactor(Randomizer rnd) {
-    int otyughCount = 0;
-    int pitCount = 0;
+  private SmellFactor checkSenseFactor(Randomizer rnd) {
+    int count = 0;
 
-    if (atLocation.getPit().getQuantity() > 0) {
-      isAlive = false;
-      //atLocation.setPlayer(null, rnd);
-      return new Pair<>(SmellFactor.NO_SMELL, WindFactor.IN_PIT);
-    }
     if (atLocation.getOtyugh().getQuantity() > 0) {
       if (atLocation.getOtyugh().getHealth() == 50) {
         int chance = rnd.getRandomFromBound(2);
         if (chance == 0) {
-          return new Pair<>(SmellFactor.WITH_OTYUGH_SAVED, WindFactor.NO_WIND);
+          return SmellFactor.WITH_OTYUGH_SAVED;
         }
       } else {
         isAlive = false;
-        //atLocation.setPlayer(null, rnd);
-        return new Pair<>(SmellFactor.WITH_OTYUGH_DEAD, WindFactor.NO_WIND);
+        return SmellFactor.WITH_OTYUGH_DEAD;
       }
     }
 
     for (Location l : atLocation.getConnectedDirLoc().values()) {
       if (l.getOtyugh().getQuantity() > 0) {
-        otyughCount++;
-      }
-      if (l.getPit().getQuantity() > 0) {
-        pitCount++;
-      }
-
-      if (otyughCount > 0 && pitCount > 0) {
-        return new Pair<>(SmellFactor.MORE_PUNGENT, WindFactor.MORE_POWERFUL_WIND);
+        return SmellFactor.MORE_PUNGENT;
       }
     }
 
     for (Location l : atLocation.getConnectedDirLoc().values()) {
       for (Location tempLoc : l.getConnectedDirLoc().values()) {
         if (tempLoc.getOtyugh().getQuantity() > 0) {
-          otyughCount++;
-        }
-
-        if (tempLoc.getPit().getQuantity() > 0) {
-          pitCount++;
+          count++;
         }
       }
     }
 
-    if (otyughCount >= 2 && pitCount >= 2) {
-      return new Pair<>(SmellFactor.MORE_PUNGENT, WindFactor.MORE_POWERFUL_WIND);
-    } else if (otyughCount == 1 && pitCount == 1) {
-      return new Pair<>(SmellFactor.LESS_PUNGENT, WindFactor.LESS_POWERFUL_WIND);
-    } else if (otyughCount >= 2 && pitCount == 1) {
-      return new Pair<>(SmellFactor.MORE_PUNGENT, WindFactor.LESS_POWERFUL_WIND);
-    } else if (otyughCount == 1 && pitCount >= 2) {
-      return new Pair<>(SmellFactor.LESS_PUNGENT, WindFactor.MORE_POWERFUL_WIND);
+    if (count >= 2) {
+      return SmellFactor.MORE_PUNGENT;
+    } else if (count == 1) {
+      return SmellFactor.LESS_PUNGENT;
     }
-
-    return new Pair<>(SmellFactor.NO_SMELL, WindFactor.NO_WIND);
+    return SmellFactor.NO_SMELL;
   }
 
   @Override
@@ -305,7 +282,7 @@ public class PlayerImpl implements Player {
   }
 
   @Override
-  public Pair<SmellFactor, WindFactor> getSenseFactor(Randomizer rnd) {
+  public SmellFactor getSenseFactor(Randomizer rnd) {
     return checkSenseFactor(rnd);
   }
 }

@@ -15,7 +15,7 @@ public class PopupPanel {
   JButton ok = new JButton("Show");
 
 
-  public PopupPanel() {
+  public PopupPanel(DungeonView view) {
     ok.setActionCommand("Okay");
 
     frame.setLayout(new FlowLayout());
@@ -29,14 +29,7 @@ public class PopupPanel {
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
 
-    ok.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e){
-        panel.setSize(distance.getWidth(), distance.getHeight());
-        panel.setLocation(distance.getLocation().x, distance.getLocation().y
-                + distance.getHeight());
-        panel.setVisible(true);
-      }
-    });
+    ok.addActionListener(l -> view.setDistance(distance.getText()));
   }
 
   public String getDistance() {

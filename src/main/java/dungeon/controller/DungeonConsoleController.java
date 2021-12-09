@@ -53,15 +53,15 @@ public class DungeonConsoleController implements DungeonController {
       throw new IllegalArgumentException("Invalid model.");
     }
 
-    showSmellFactor(dungeonGame.startQuest().getValue0().getSmellFactor());
+    showSmellFactor(dungeonGame.startQuest().getSmellFactor());
     loop:
     while (!dungeonGame.gameOver()) {
       out.append(dungeonGame.toString()).append("\n");
       out.append("Doors lead to: ");
       out.append(dungeonGame.getPlayerMoves().toString()).append("\n\n");
 
-      showSmellFactor(dungeonGame.getPlayerSenseFactor().getValue0().getSmellFactor());
-      showWindFactor(dungeonGame.getPlayerSenseFactor().getValue1().getWindFactor());
+      showSmellFactor(dungeonGame.getPlayerSenseFactor().getSmellFactor());
+      //showWindFactor(dungeonGame.getPlayerSenseFactor().getValue1().getWindFactor());
 
       out.append(dungeonGame.getPlayerInfo()).append("\n");
       out.append("Move Pick Shoot ? ( M/P/S )\n");
@@ -148,12 +148,12 @@ public class DungeonConsoleController implements DungeonController {
 
   private void move(Dungeon dungeonGame, String direction, Appendable out, Randomizer rnd)
           throws IOException {
-    Pair<SmellFactor, WindFactor> senseFactor = new Pair<>(SmellFactor.NO_SMELL, WindFactor.NO_WIND);
+    SmellFactor senseFactor = SmellFactor.NO_SMELL;
     try {
       senseFactor = dungeonGame.movePlayer(direction);
 
-      showSmellFactor(senseFactor.getValue0().getSmellFactor());
-      showWindFactor(senseFactor.getValue1().getWindFactor());
+      showSmellFactor(senseFactor.getSmellFactor());
+      //showWindFactor(senseFactor.getValue1().getWindFactor());
     } catch (IllegalArgumentException ex) {
       out.append("Didn't get you? Try from available directions.\n");
     }

@@ -1,15 +1,18 @@
 package dungeon.view;
 
 import java.awt.*;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import dungeon.controller.DungeonViewController;
 import dungeon.controller.Features;
+import dungeon.model.Location;
 import dungeon.model.ReadOnlyDungeon;
 
 public class DungeonSwingView extends JFrame implements DungeonView {
@@ -27,15 +30,17 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   private JButton numOtyughsOkay;
   private JButton treasurePercentOkay;
 
-  private DungeonPanel panel;
+  private DungeonPanel dungeonPanel;
+  private LocationPanel locationPanel;
   private JTextField rows;
   private JTextField columns;
   private JTextField interconnectivity;
   private JTextField isWrap;
   private JTextField numOtyughs;
   private JTextField treasureArrowPercent;
-  //private JScrollPane scrollableDungeon;
   private ReadOnlyDungeon dungeon;
+
+  int shootDistance;
 
   public DungeonSwingView(ReadOnlyDungeon dungeon) {
 
@@ -105,11 +110,24 @@ public class DungeonSwingView extends JFrame implements DungeonView {
     this.setJMenuBar(menubar);
 
     this.dungeon = dungeon;
-    //this.scrollableDungeon = new JScrollPane(panel);
+    dungeonPanel = new DungeonPanel(dungeon);
+    locationPanel = new LocationPanel(dungeon);
+    JScrollPane scrollableDungeon = new JScrollPane(dungeonPanel);
+    this.add(scrollableDungeon, BorderLayout.NORTH);
+    this.add(locationPanel, BorderLayout.SOUTH);
+    JLabel caveEntities = new JLabel();
+    caveEntities.setSize(500, 300);
+    caveEntities.setName("baseImage");
+    locationPanel.putClientProperty(caveEntities.getName(), caveEntities);
+    locationPanel.add(caveEntities);
+
+
+    // https://www.javatpoint.com/java-jscrollpane
+
   }
 
   @Override
-  public void setFeatures(Features f) {
+  public void setFeatures(Features f, KeyListener key) {
     startQuest.addActionListener(l -> f.startGame());
     restartQuest.addActionListener(l -> f.restartGame());
     quit.addActionListener(l -> System.exit(0));
@@ -119,6 +137,7 @@ public class DungeonSwingView extends JFrame implements DungeonView {
     isWrapOkay.addActionListener(l -> f.processIsWrap());
     treasurePercentOkay.addActionListener(l -> f.processTreasurePercent());
     numOtyughsOkay.addActionListener(l -> f.processNumOtyughs());
+    this.addKeyListener(key);
   }
 
   @Override
@@ -129,7 +148,8 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   @Override
   public void refresh() {
     this.repaint();
-    panel.revalidate();
+    this.revalidate();
+    this.resetFocus();
   }
 
   @Override
@@ -148,7 +168,7 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   }
 
   @Override
-  public String getTreasurePerecentage() {
+  public String getTreasurePercentage() {
     return treasureArrowPercent.getText();
   }
 
@@ -224,13 +244,8 @@ public class DungeonSwingView extends JFrame implements DungeonView {
 
   @Override
   public void addPanel(DungeonViewController controller) {
-    if (panel == null) {
-      panel = new DungeonPanel(dungeon);
-    } else {
-      //scrollableDungeon.remove(panel);
-      clearPanel();
-    }
-    panel.setLayout(new GridBagLayout());
+
+    dungeonPanel.setLayout(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.insets = new Insets(1, 1, 1, 1);
     gbc.weightx = 0;
@@ -245,7 +260,7 @@ public class DungeonSwingView extends JFrame implements DungeonView {
         gbc.gridx = j;
         try {
           if (dungeon.getLocationAt(i, j).getIsTraversed()) {
-            String imageName = panel.getImageNameOfCell(i, j);
+            String imageName = dungeonPanel.getImageNameOfCell(i, j);
 
             tempLabel = new JLabel(new ImageIcon(ImageIO.read(
                     new File("./dungeon-images/dungeon-images/color-cells/"
@@ -259,24 +274,18 @@ public class DungeonSwingView extends JFrame implements DungeonView {
           tempLabel.addMouseListener(ml);
           tempLabel.setName(i + " " + j);
           tempLabel.setSize(new Dimension(250,250));
-          panel.add(tempLabel, gbc);
-          panel.putClientProperty(i + " " + j, tempLabel);
+          dungeonPanel.add(tempLabel, gbc);
+          dungeonPanel.putClientProperty(i + " " + j, tempLabel);
         } catch (IOException ioe) {
           ioe.printStackTrace();
         }
       }
     }
-
-    // https://www.javatpoint.com/java-jscrollpane
-//    JScrollPane scrollableDungeon = new JScrollPane(panel);
-//    this.add(scrollableDungeon);
-
-    this.add(panel);
   }
 
   @Override
   public void clearPanel() {
-    panel.removeAll();
+    dungeonPanel.removeAll();
   }
 
   @Override
@@ -291,8 +300,28 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   }
 
   @Override
-  public String addPopup() {
-    PopupPanel popup = new PopupPanel();
-    return popup.getDistance();
+  public void addPopup() {
+    PopupPanel popup = new PopupPanel(this);
   }
+
+  @Override
+  public DungeonPanel getDungeonPanel() {
+    return dungeonPanel;
+  }
+
+  @Override
+  public void setDistance(String distance) {
+    try {
+      shootDistance = Integer.parseInt(distance);
+    } catch (NoSuchElementException | IllegalArgumentException iae) {
+      // do nothing
+    }
+  }
+
+  @Override
+  public void pick() {
+
+  }
+
+
 }

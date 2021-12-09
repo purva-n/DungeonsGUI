@@ -1,10 +1,7 @@
 package dungeon.controller;
 
-import org.javatuples.Pair;
-
 import java.awt.event.KeyEvent;
-import java.util.HashMap;
-import java.util.Map;
+import java.awt.event.KeyListener;
 import java.util.NoSuchElementException;
 
 import javax.swing.*;
@@ -12,14 +9,17 @@ import javax.swing.*;
 import dungeon.model.Direction;
 import dungeon.model.Dungeon;
 import dungeon.view.DungeonView;
-import dungeon.view.KeyBoardListener;
+
+import static java.awt.event.KeyEvent.VK_A;
+import static java.awt.event.KeyEvent.VK_P;
 
 
-public class DungeonViewController extends JFrame implements Features {
+public class DungeonViewController extends JFrame implements Features, KeyListener {
 
-  private Dungeon model;
-  private DungeonView view;
-
+  private final Dungeon model;
+  private final DungeonView view;
+  boolean pick = false;
+  boolean shoot = false;
 
   public DungeonViewController(DungeonView view, Dungeon model) {
     if (view == null || model == null) {
@@ -28,25 +28,6 @@ public class DungeonViewController extends JFrame implements Features {
 
     this.model = model;
     this.view = view;
-    configureKeyBoardListener();
-  }
-
-  private void configureKeyBoardListener() {
-    Map<Character, Runnable> keyTypes = new HashMap<>();
-    Map<Integer, Runnable> keyPresses = new HashMap<>();
-    Map<Integer, Runnable> keyReleases = new HashMap<>();
-
-    keyPresses.put(KeyEvent.VK_S, () -> {
-      String distance = view.addPopup();
-      System.out.println(model.makePlayerShoot("S", distance));
-    });
-
-    KeyBoardListener kbd = new KeyBoardListener();
-    kbd.setKeyTypedMap(keyTypes);
-    kbd.setKeyPressedMap(keyPresses);
-    kbd.setKeyReleasedMap(keyReleases);
-
-    view.addKeyListener(kbd);
   }
 
   @Override
@@ -82,14 +63,18 @@ public class DungeonViewController extends JFrame implements Features {
   @Override
   public void startGame() {
     model.startQuest();
+    System.out.println("Add panel");
     view.addPanel(this);
+    System.out.println("Added panel");
+
+    System.out.println("view refresh");
     view.refresh();
-    view.resetFocus();
+    System.out.println("View refreshed");
   }
 
   @Override
   public void playGame() {
-    view.setFeatures(this);
+    view.setFeatures(this, this);
     view.makeVisible();
   }
 
@@ -150,7 +135,7 @@ public class DungeonViewController extends JFrame implements Features {
 
   @Override
   public void processTreasurePercent() {
-    Integer treasurePercent = validateIntegerNumber(view.getTreasurePerecentage());
+    Integer treasurePercent = validateIntegerNumber(view.getTreasurePercentage());
     if (treasurePercent == null) {
       // view.popup
       view.clearTreasurePercent();
@@ -185,4 +170,65 @@ public class DungeonViewController extends JFrame implements Features {
     return inputNum;
   }
 
+  @Override
+  public void keyTyped(KeyEvent e) {
+
+  }
+
+  @Override
+  public void keyPressed(KeyEvent e) {
+    System.out.println(e.getKeyCode());
+
+    if(e.getKeyCode() == VK_P) {
+      pick = true;
+    }
+
+    if(e.getKeyCode() == KeyEvent.VK_S) {
+      shoot = true;
+    }
+  }
+
+  @Override
+  public void keyReleased(KeyEvent e) {
+    System.out.println(e.getKeyCode());
+
+    if(pick) {
+      switch (e.getKeyCode()) {
+        case VK_A:
+          model.makePlayerCollectArrow();
+          break;
+        case KeyEvent.VK_D:
+          model.makePlayerCollectTreasure("diamond");
+          break;
+        case KeyEvent.VK_R:
+          model.makePlayerCollectTreasure("ruby");
+          break;
+        case KeyEvent.VK_S:
+          model.makePlayerCollectTreasure("sapphire");
+          break;
+        default:
+          //do nothing
+      }
+
+      pick = false;
+      view.refresh();
+    }
+
+
+    if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+      move("S");
+    }
+
+    if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+      move("W");
+    }
+
+    if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+      move("E");
+    }
+
+    if(e.getKeyCode() == KeyEvent.VK_UP) {
+      move("N");
+    }
+  }
 }

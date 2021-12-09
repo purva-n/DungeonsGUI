@@ -24,7 +24,7 @@ public interface ReadOnlyDungeon {
 
   List<Direction> getPlayerMoves();
 
-  Pair<SmellFactor, WindFactor> getPlayerSenseFactor();
+  SmellFactor getPlayerSenseFactor();
 
   String getPlayerInfo();
 

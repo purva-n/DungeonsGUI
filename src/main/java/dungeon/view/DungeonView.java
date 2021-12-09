@@ -10,7 +10,7 @@ import dungeon.controller.Features;
 
 public interface DungeonView {
 
-  void setFeatures(Features f);
+  void setFeatures(Features f, KeyListener keys);
 
   void makeVisible();
 
@@ -22,7 +22,7 @@ public interface DungeonView {
 
   String getInterconnectivity();
 
-  String getTreasurePerecentage();
+  String getTreasurePercentage();
 
   String getNumOtyughs();
 
@@ -60,7 +60,13 @@ public interface DungeonView {
 
   void shootOtyugh();
 
-  String addPopup();
+  void addPopup();
 
   void addKeyListener(KeyListener listener);
+
+  DungeonPanel getDungeonPanel();
+
+  void setDistance(String text);
+
+  void pick();
 }

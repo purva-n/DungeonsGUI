@@ -1,8 +1,11 @@
+import dungeon.controller.DungeonConsoleController;
+import dungeon.controller.DungeonController;
 import dungeon.controller.DungeonViewController;
 import dungeon.model.Dungeon;
 import dungeon.model.DungeonGame;
 import dungeon.model.Player;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import dungeon.view.DungeonSwingView;
 import dungeon.view.DungeonView;
@@ -24,9 +27,14 @@ public class Main {
    */
   public static void main(String[] args) throws IOException {
 
-    Dungeon dungeonQuest = new DungeonGame(rnd);
+//    Dungeon dungeonQuest = new DungeonGame(rnd, 6, 8, 20, 2);
+//    DungeonController dungeonController = new DungeonConsoleController(new InputStreamReader(System.in),
+//            System.out);
+//
+//    dungeonController.playGame(rnd, dungeonQuest);
 
-    // Create the model
+    //Create the model
+    Dungeon dungeonQuest = new DungeonGame(rnd);
     DungeonView view = new DungeonSwingView(dungeonQuest);
     Dungeon model = new DungeonGame(rnd);
 

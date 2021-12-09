@@ -134,7 +134,7 @@ public class DungeonStatic extends AbstractDungeon {
   }
 
   @Override
-  public Pair<SmellFactor, WindFactor> startQuest() {
+  public SmellFactor startQuest() {
     start.setPlayer(player, rnd);
     return player.setLocation(start, rnd);
   }

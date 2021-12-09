@@ -31,12 +31,13 @@ public class DungeonGame implements Dungeon {
   private List<Location> caves;
   private Location start;
   private Location end;
-  private boolean gameStarted;
+  private static boolean gameStarted;
   private Randomizer rnd;
 
   public DungeonGame(Randomizer rnd) {
     gameStarted = false;
     this.rnd = rnd;
+    caves = new ArrayList<>();
   }
 
   /**
@@ -57,6 +58,11 @@ public class DungeonGame implements Dungeon {
     }
 
     this.rnd = rnd;
+    dungeonRow = rows;
+    dungeonCol = columns;
+    this.interconnectivity = interconnectivity;
+    numOtyughs = numOtyugh;
+    caves = new ArrayList<>();
     constructDungeon();
   }
 
@@ -94,8 +100,8 @@ public class DungeonGame implements Dungeon {
 
     refactorCavesToTunnels();
     enlistCaves();
-    addTreasureToCaves(rnd, treasureArrowPercent);
-    addArrowsToLocation(rnd, treasureArrowPercent);
+    addTreasureToCaves(treasureArrowPercent);
+    addArrowsToLocation(treasureArrowPercent);
     int startEndLength = calculateStartEndLength();
 
     if (startEndLength < 5) {
@@ -151,7 +157,7 @@ public class DungeonGame implements Dungeon {
   }
 
   @Override
-  public Pair<SmellFactor, WindFactor> getPlayerSenseFactor() {
+  public SmellFactor getPlayerSenseFactor() {
     return player.getSenseFactor(rnd);
   }
 
@@ -303,7 +309,7 @@ public class DungeonGame implements Dungeon {
 
 
   @Override
-  public Pair<SmellFactor, WindFactor> startQuest() {
+  public SmellFactor startQuest() {
 
     constructDungeon();
     for (int i = 0; i < dungeonRow; i++) {
@@ -368,7 +374,7 @@ public class DungeonGame implements Dungeon {
   }
 
   @Override
-  public Pair<SmellFactor, WindFactor> movePlayer(String direction) {
+  public SmellFactor movePlayer(String direction) {
       if (!player.checkValidDirection(direction)) {
         throw new IllegalArgumentException("Select from possible moves. try again!");
       }
@@ -452,7 +458,6 @@ public class DungeonGame implements Dungeon {
   }
 
   private void enlistCaves() {
-    caves = new ArrayList<>();
     Location loc;
 
     for (int i = 0; i < dungeonRow; i++) {
@@ -533,7 +538,7 @@ public class DungeonGame implements Dungeon {
     refactorCavesToTunnels();
   }
 
-  private void addTreasureToCaves(Randomizer rnd, int treasurePercent) {
+  private void addTreasureToCaves(int treasurePercent) {
     try {
       int percentCaves = (caves.size() * treasurePercent / 100);
       int cavesNum = rnd.getRandomFromRange(percentCaves, caves.size());
@@ -549,7 +554,7 @@ public class DungeonGame implements Dungeon {
     }
   }
 
-  private void addArrowsToLocation(Randomizer rnd, int arrowPercent) {
+  private void addArrowsToLocation(int arrowPercent) {
     int percentLocs = this.getDimensionRow() * this.getDimensionColumn() * arrowPercent / 100;
     int locNum = rnd.getRandomFromRange(percentLocs, this.getDimensionRow()
             * this.getDimensionColumn());
@@ -646,7 +651,6 @@ public class DungeonGame implements Dungeon {
 
   private void constructDungeon() {
 
-    rnd = new TrueRandom();
     int startEndLength;
 
     // create a player
@@ -668,8 +672,8 @@ public class DungeonGame implements Dungeon {
 
       buildDungeon(rnd);
       enlistCaves();
-      addTreasureToCaves(rnd, treasureArrowPercent);
-      addArrowsToLocation(rnd, treasureArrowPercent);
+      addTreasureToCaves(treasureArrowPercent);
+      addArrowsToLocation(treasureArrowPercent);
       addPitToCaves(rnd, numOtyughs);
 
       this.start = caves.get(rnd.getRandomFromBound(caves.size()));

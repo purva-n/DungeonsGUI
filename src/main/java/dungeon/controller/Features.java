@@ -1,6 +1,7 @@
 package dungeon.controller;
 
-import dungeon.controller.DungeonController;
+import java.awt.event.KeyListener;
+
 import dungeon.model.Direction;
 
 public interface Features {

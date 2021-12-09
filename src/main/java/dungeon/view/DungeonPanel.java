@@ -30,6 +30,8 @@ public class DungeonPanel extends JPanel {
 
   @Override
   public void paintComponent(Graphics g) {
+    if(dungeon.gameBegin()) {
+
     ImageIcon finalImage;
     File cell;
     for (int i = 0; i < dungeon.getDimensionRow(); i++) {
@@ -49,41 +51,30 @@ public class DungeonPanel extends JPanel {
 
               if (current.getOtyugh().getQuantity() > 0) {
                 superImposedPlayer = overlay(superImposedPlayer,
-                        "./dungeon-images/dungeon-images/otyugh.png", 5);
+                        "./dungeon-images/dungeon-images/otyugh.png", 5, 5);
               }
 
-              if (current.getArrow().getQuantity() > 0) {
-                superImposedPlayer = overlay(superImposedPlayer,
-                        "./dungeon-images/dungeon-images/arrow-white.png", 20);
-              }
+              SmellFactor sense = dungeon.getPlayerSenseFactor();
 
-//              if(current.getTreasure().getQuantity() > 0) {
-//                for(current.getTreasure().getStones().get(TreasureType.RUBY) > 0)
-//                superImposedPlayer = overlay(superImposedPlayer,
-//                        "./dungeon-images/dungeon-images/arrow-white.png", 3);
-//              }
-
-              Pair<SmellFactor, WindFactor> sense = dungeon.getPlayerSenseFactor();
-
-              switch (sense.getValue0()) {
+              switch (sense) {
                 case LESS_PUNGENT:
                   superImposedPlayer =
                           overlay(superImposedPlayer,
                                   "./dungeon-images/dungeon-images/stench01.png",
-                                  2);
+                                  2, 2);
                   break;
                 case MORE_PUNGENT:
                   superImposedPlayer =
                           overlay(superImposedPlayer,
                                   "./dungeon-images/dungeon-images/stench02.png",
-                                  2);
+                                  2, 2);
                   break;
                 case WITH_OTYUGH_DEAD:
                 case WITH_OTYUGH_SAVED:
                   superImposedPlayer =
                           overlay(superImposedPlayer,
                                   "./dungeon-images/dungeon-images/otyugh.png",
-                                  2);
+                                  2, 2);
                   break;
                 case NO_SMELL:
                   break;
@@ -97,6 +88,7 @@ public class DungeonPanel extends JPanel {
         }
       }
     }
+  }
   }
 
   public String getImageNameOfCell(int row, int col) {
@@ -132,7 +124,7 @@ public class DungeonPanel extends JPanel {
    * @return The superimposed image.
    * @throws IOException
    */
-  public BufferedImage superImpose(File baseImagePath, File topImagePath, int xOffset, int yOffset)
+  public static BufferedImage superImpose(File baseImagePath, File topImagePath, int xOffset, int yOffset)
           throws IOException {
     BufferedImage baseImage = ImageIO.read(baseImagePath);
     BufferedImage topImage = ImageIO.read(topImagePath);
@@ -157,18 +149,19 @@ public class DungeonPanel extends JPanel {
    *
    * @param starting The base image. This is the image that needs to have another image layered over it.
    * @param fpath    The path of the image that should be superimposed i.e. the image on top of the base image.
-   * @param offset   The x offset by which the top image should be superimposed on the base image.
+   * @param offsetx   The x offset by which the top image should be superimposed on the base image.
+   * @param offsetx   The x offset by which the top image should be superimposed on the base image.
    * @return The combined image where the image in 'fpath' is superimposed on top of the image in 'starting'
    * @throws IOException Thrown when fpath is not found?
    */
-  private BufferedImage overlay(BufferedImage starting, String fpath, int offset) throws IOException {
+  public static BufferedImage overlay(BufferedImage starting, String fpath, int offsetx, int offsety) throws IOException {
     BufferedImage overlay = ImageIO.read(new File(fpath));
     int w = Math.max(starting.getWidth(), overlay.getWidth());
     int h = Math.max(starting.getHeight(), overlay.getHeight());
     BufferedImage combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
     Graphics g = combined.getGraphics();
     g.drawImage(starting, 0, 0, null);
-    g.drawImage(overlay, offset, offset, null);
+    g.drawImage(overlay, offsetx, offsety, null);
     return combined;
   }
 }

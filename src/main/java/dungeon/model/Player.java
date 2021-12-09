@@ -30,7 +30,7 @@ public interface Player {
    *
    * @param whichDirection {@link Direction}.
    */
-  Pair<SmellFactor, WindFactor> moveToLocation(Randomizer rnd, Direction whichDirection, boolean isWrap);
+  SmellFactor moveToLocation(Randomizer rnd, Direction whichDirection, boolean isWrap);
 
   /**
    * Method to get the possible {@link Direction}s where the Player can move to next.
@@ -58,7 +58,7 @@ public interface Player {
    *
    * @param l where the player needs to be placed.
    */
-  Pair<SmellFactor, WindFactor> setLocation(Location l, Randomizer rnd);
+  SmellFactor setLocation(Location l, Randomizer rnd);
 
   /**
    * Method to collect treasure from the Location/ Cave currently at.
@@ -107,5 +107,5 @@ public interface Player {
    * @param rnd random number generator.
    * @return integer value of the smell of the Otyugh in increasing sense.
    */
-  Pair<SmellFactor, WindFactor> getSenseFactor(Randomizer rnd);
+  SmellFactor getSenseFactor(Randomizer rnd);
 }
