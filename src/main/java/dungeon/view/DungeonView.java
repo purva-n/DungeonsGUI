@@ -60,13 +60,7 @@ public interface DungeonView {
 
   void shootOtyugh();
 
-  void addPopup();
-
   void addKeyListener(KeyListener listener);
-
-  DungeonPanel getDungeonPanel();
-
-  void setDistance(String text);
 
   void pick();
 

@@ -40,8 +40,6 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   private JTextField treasureArrowPercent;
   private ReadOnlyDungeon dungeon;
 
-  int shootDistance;
-
   public DungeonSwingView(ReadOnlyDungeon dungeon) {
 
     setSize(650, 550);
@@ -304,24 +302,6 @@ public class DungeonSwingView extends JFrame implements DungeonView {
 
   }
 
-  @Override
-  public void addPopup() {
-    PopupPanel popup = new PopupPanel(this);
-  }
-
-  @Override
-  public DungeonPanel getDungeonPanel() {
-    return dungeonPanel;
-  }
-
-  @Override
-  public void setDistance(String distance) {
-    try {
-      shootDistance = Integer.parseInt(distance);
-    } catch (NoSuchElementException | IllegalArgumentException iae) {
-      // do nothing
-    }
-  }
 
   @Override
   public void pick() {
