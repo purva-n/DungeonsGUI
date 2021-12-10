@@ -64,9 +64,11 @@ public interface DungeonView {
 
   void removeDungeonPanelListeners();
 
-  void clearDungeonPanel(DungeonViewController controller);
+  void clearDungeonPanel();
 
   void setPlayerAction(String message);
 
   void removeDungeonPanel();
+
+  void addMouseListeners(DungeonViewController controller);
 }

@@ -108,8 +108,9 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
 
   @Override
   public void restartGame() {
+    view.addMouseListeners(this);
     model.setRestart();
-    view.clearDungeonPanel(this);
+    view.clearDungeonPanel();
     model.startQuest();
     view.setFocus(true);
     view.refresh();

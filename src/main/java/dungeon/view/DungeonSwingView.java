@@ -367,7 +367,7 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   }
 
   @Override
-  public void clearDungeonPanel(DungeonViewController controller) {
+  public void clearDungeonPanel() {
     if(dungeon.gameBegin()) {
       dungeonPanel.emptyTheLocations();
     }
@@ -381,5 +381,10 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   @Override
   public void removeDungeonPanel() {
     dungeonPanel.removeAll();
+  }
+
+  @Override
+  public void addMouseListeners(DungeonViewController controller) {
+    dungeonPanel.addMouseListeners(controller);
   }
 }

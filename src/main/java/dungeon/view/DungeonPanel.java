@@ -22,12 +22,12 @@ public class DungeonPanel extends JPanel {
 
   private final ReadOnlyDungeon dungeon;
   private final File player;
-  //private JLabel[][] dungeonGrid;
+  private final File blank;
 
   DungeonPanel(ReadOnlyDungeon dungeon) {
     this.dungeon = dungeon;
-    //setLayout(new GridLayout(dungeon.getDimensionRow(),dungeon.getDimensionColumn()));
     player = new File("./dungeon-images/dungeon-images/player.png");
+    blank = new File("./dungeon-images/dungeon-images/blank.png");
   }
 
   @Override
@@ -182,7 +182,7 @@ public class DungeonPanel extends JPanel {
         JLabel label = ((JLabel) getClientProperty(i + " " + j));
         try {
           label.setIcon(new ImageIcon(ImageIO.read
-                  (new File("./dungeon-images/dungeon-images/blank.png"))));
+                  (blank)));
         } catch (IOException e) {
           e.printStackTrace();
         }
