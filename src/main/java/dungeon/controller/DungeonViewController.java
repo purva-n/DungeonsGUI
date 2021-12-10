@@ -9,7 +9,6 @@ import javax.swing.*;
 import dungeon.model.Direction;
 import dungeon.model.Dungeon;
 import dungeon.model.SmellFactor;
-import dungeon.view.DungeonSwingView;
 import dungeon.view.DungeonView;
 
 import static java.awt.event.KeyEvent.VK_P;
@@ -68,6 +67,10 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
     try {
       view.setPlayerAction("");
       smell = model.movePlayer(direction);
+      if(model.gameOver() && model.playerIsAlive()) {
+        view.setPlayerAction("You won!!! Hurrah");
+        view.removeDungeonPanelListeners();
+      }
       view.refresh();
     } catch (IllegalArgumentException | IllegalStateException e) {
       //do nothing
@@ -84,7 +87,7 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
 
   @Override
   public void startGame() {
-    view.clearPanel();
+    view.removeDungeonPanel();
     view.setPlayerAction("");
     model.startQuest();
     System.out.println("Add panel");
@@ -105,7 +108,11 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
 
   @Override
   public void restartGame() {
-
+    model.setRestart();
+    view.clearDungeonPanel(this);
+    model.startQuest();
+    view.setFocus(true);
+    view.refresh();
   }
 
   @Override

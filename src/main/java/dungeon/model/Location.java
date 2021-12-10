@@ -20,9 +20,7 @@ public class Location {
   private final int rowNum;
   private final int columnNum;
   private int id;
-  //private final Set<Direction> hasConnectionAt;
-  //private final List<Location> isConnectedToLoc;
-  private Map<Direction, Location> connectedDirLoc;
+  private final Map<Direction, Location> connectedDirLoc;
   private LocationType type;
   private final List<EntityInLocation> entitiesInLoc;
   private static int count;
@@ -60,10 +58,7 @@ public class Location {
     this.rowNum = loc.getR();
     this.columnNum = loc.getC();
     this.entitiesInLoc = loc.getEntitiesInLoc();
-    //this.hasConnectionAt = new HashSet<>();
-    //this.hasConnectionAt.addAll(loc.getHasConnectionAt());
-
-    //this.isConnectedToLoc = loc.getIsConnectedToLoc();
+    this.connectedDirLoc = loc.getConnectedDirLoc();
     this.isTraversed = loc.getIsTraversed();
     this.type = loc.getType();
   }
@@ -117,6 +112,12 @@ public class Location {
   void addOtyugh() {
     this.entitiesInLoc.get(Constants.OTYUGH.ordinal()).updateQuantity(1);
     this.getOtyugh().setHealth(this.getOtyugh().getHealth() * this.getOtyugh().getQuantity());
+  }
+
+  void removeOtyugh() {
+    this.entitiesInLoc.get(Constants.OTYUGH.ordinal())
+            .updateQuantity(getOtyugh().getQuantity() * -1);
+    this.getOtyugh().setHealth(0);
   }
 
   void addPit() {

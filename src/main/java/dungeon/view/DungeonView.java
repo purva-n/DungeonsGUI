@@ -64,7 +64,9 @@ public interface DungeonView {
 
   void removeDungeonPanelListeners();
 
-  void clearPanel();
+  void clearDungeonPanel(DungeonViewController controller);
 
   void setPlayerAction(String message);
+
+  void removeDungeonPanel();
 }

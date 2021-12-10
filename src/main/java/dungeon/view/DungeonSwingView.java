@@ -5,8 +5,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -37,7 +35,6 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   private JTextField treasureArrowPercent;
   private JLabel playerAction;
   private ReadOnlyDungeon dungeon;
-  private static boolean popup;
 
   public DungeonSwingView(ReadOnlyDungeon dungeon) {
 
@@ -107,7 +104,7 @@ public class DungeonSwingView extends JFrame implements DungeonView {
     locationPanel = new LocationPanel(dungeon);
 
     playerAction = new JLabel();
-    playerAction.setSize(600, 200);
+    playerAction.setSize(600, 350);
     playerAction.setForeground(Color.RED);
     playerAction.setFont(new Font("TimesRoman", Font.BOLD, 20));
     this.add(playerAction, BorderLayout.NORTH);
@@ -194,8 +191,6 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   @Override
   public void makeVisible(boolean visible) {
     this.setVisible(visible);
-//    dungeonPanel.setVisible(visible);
-//    locationPanel.setVisible(visible);
   }
 
   @Override
@@ -372,14 +367,19 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   }
 
   @Override
-  public void clearPanel() {
-    dungeonPanel.removeAll();
-    playerInfoPanel.removeAll();
-    this.addPlayerInfoPanel();
+  public void clearDungeonPanel(DungeonViewController controller) {
+    if(dungeon.gameBegin()) {
+      dungeonPanel.emptyTheLocations();
+    }
   }
 
   @Override
   public void setPlayerAction(String message) {
     playerAction.setText(message);
+  }
+
+  @Override
+  public void removeDungeonPanel() {
+    dungeonPanel.removeAll();
   }
 }

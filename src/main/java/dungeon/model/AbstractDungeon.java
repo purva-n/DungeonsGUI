@@ -136,4 +136,10 @@ public abstract class AbstractDungeon implements Dungeon {
   public Direction getValidDirectionOfLocationAt(int row, int column) {
     return Direction.ZERO;
   }
+
+  @Override
+  public void setRestart() {}
+
+  @Override
+  public boolean restarted() { return false;}
 }

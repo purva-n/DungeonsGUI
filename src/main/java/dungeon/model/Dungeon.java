@@ -38,4 +38,6 @@ public interface Dungeon extends ReadOnlyDungeon {
   void setTreasurePercent(Integer treasurePercent);
 
   void setNumOtyughs(Integer numOtyughs);
+
+  void setRestart();
 }

@@ -22,17 +22,9 @@ public interface Features {
 
   void restartGame();
 
-//  void processRows();
-//
-//  void processColumns();
-//
-//  void processInterconnectivity();
-//
-//  void processIsWrap();
-//
-//  void processTreasurePercent();
-//
-//  void processNumOtyughs();
-
   void processGameSettings();
+
+  void afterPlayerDead();
+
+  void afterPlayerSaved();
 }

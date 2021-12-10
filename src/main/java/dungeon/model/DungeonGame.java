@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+
 import random.Randomizer;
 
 /**
@@ -29,7 +30,8 @@ public class DungeonGame implements Dungeon {
   private Location start;
   private Location end;
   private static boolean gameStarted;
-  private Randomizer rnd;
+  private final Randomizer rnd;
+  private static boolean restart;
 
   public DungeonGame(Randomizer rnd) {
     gameStarted = false;
@@ -42,6 +44,7 @@ public class DungeonGame implements Dungeon {
     interconnectivity = (int) (dungeonRow * dungeonCol * 0.1);
     treasureArrowPercent = 40;
     numOtyughs = interconnectivity / 2;
+    restart = false;
   }
 
   /**
@@ -253,57 +256,14 @@ public class DungeonGame implements Dungeon {
     return numOtyughs;
   }
 
-//  @Override
-//  public String traverseStartToEnd(StringBuilder acc, Location at, Location end, Randomizer rnd) {
-//    if (at == getEndLoc()) {
-//      journeyIsEnded = true;
-//    } else {
-//      for (Location loc : at.getIsConnectedToLoc()) {
-//        if (!loc.getIsTraversed()) {
-//          player.setLocation(loc, rnd);
-//        } else {
-//          continue;
-//        }
-//        acc.append(player).append("\n");
-//        // player.collectTreasure();
-//        player.collectArrow();
-//        acc.append(this).append("\n");
-//        acc.append(displayTreasureCollected()).append("\n");
-//        acc.append("Moves Possible: ").append(player.getMovesPossible().toString()).append("\n");
-//        traverseStartToEnd(acc, player.getAtLocation(), end, rnd);
-//        if (journeyIsEnded) {
-//          return acc.toString();
-//        }
-//      }
-//    }
-//    return acc.toString();
-//  }
-
-//  @Override
-//  public String traverseDungeon(StringBuilder acc, Location at, Randomizer rnd) {
-//    for (Location loc : at.getIsConnectedToLoc()) {
-//      if (!loc.getIsTraversed()) {
-//        player.setLocation(loc, rnd);
-//      } else {
-//        continue;
-//      }
-//      acc.append(this).append("\n");
-//      traverseDungeon(acc, player.getAtLocation(), rnd);
-//      if (journeyIsEnded) {
-//        return acc.toString();
-//      }
-//    }
-//    return acc.toString();
-//  }
-
   @Override
   public Direction getValidDirectionOfLocationAt(int row, int column) {
     Location selectedLocation = dungeon.get(row).get(column);
     Location playerLocation = player.getAtLocation();
 
-    if(playerLocation.getConnectedDirLoc().containsValue(selectedLocation)) {
-      for(Map.Entry<Direction, Location> dirloc: playerLocation.getConnectedDirLoc().entrySet()) {
-        if(dirloc.getValue().equals(selectedLocation)) {
+    if (playerLocation.getConnectedDirLoc().containsValue(selectedLocation)) {
+      for (Map.Entry<Direction, Location> dirloc : playerLocation.getConnectedDirLoc().entrySet()) {
+        if (dirloc.getValue().equals(selectedLocation)) {
           return dirloc.getKey();
         }
       }
@@ -311,14 +271,29 @@ public class DungeonGame implements Dungeon {
     return Direction.ZERO;
   }
 
+  @Override
+  public boolean restarted() {
+    return restart;
+  }
+
+  private int setStartAndEndLocation() {
+    this.start = caves.get(rnd.getRandomFromBound(caves.size()));
+    this.end = caves.get(rnd.getRandomFromBound(caves.size()));
+
+    return calculateStartEndLength();
+  }
+
 
   @Override
   public SmellFactor startQuest() {
 
     constructDungeon();
+
     for (int i = 0; i < dungeonRow; i++) {
       for (int j = 0; j < dungeonCol; j++) {
-        dungeon.get(i).get(j).hasNotTraversed();
+        if (dungeon.get(i).get(j).getIsTraversed()) {
+          dungeon.get(i).get(j).hasNotTraversed();
+        }
       }
     }
 
@@ -379,22 +354,22 @@ public class DungeonGame implements Dungeon {
 
   @Override
   public SmellFactor movePlayer(String direction) {
-      if (!player.checkValidDirection(direction)) {
-        throw new IllegalArgumentException("Select from possible moves. try again!");
-      }
+    if (!player.checkValidDirection(direction)) {
+      throw new IllegalArgumentException("Select from possible moves. try again!");
+    }
 
-      switch (direction) {
-        case "N":
-          return player.moveToLocation(rnd, Direction.NORTH, isWrapping);
-        case "S":
-          return player.moveToLocation(rnd, Direction.SOUTH, isWrapping);
-        case "E":
-          return player.moveToLocation(rnd, Direction.EAST, isWrapping);
-        case "W":
-          return player.moveToLocation(rnd, Direction.WEST, isWrapping);
-        default:
-          throw new IllegalArgumentException("Invalid direction");
-      }
+    switch (direction) {
+      case "N":
+        return player.moveToLocation(rnd, Direction.NORTH, isWrapping);
+      case "S":
+        return player.moveToLocation(rnd, Direction.SOUTH, isWrapping);
+      case "E":
+        return player.moveToLocation(rnd, Direction.EAST, isWrapping);
+      case "W":
+        return player.moveToLocation(rnd, Direction.WEST, isWrapping);
+      default:
+        throw new IllegalArgumentException("Invalid direction");
+    }
   }
 
   @Override
@@ -448,7 +423,7 @@ public class DungeonGame implements Dungeon {
   }
 
   private void addInterconnectivityEdges(Randomizer random) {
-    if(remainingEdges.size() > 0) {
+    if (remainingEdges.size() > 0) {
       for (int i = 0; i < interconnectivity; i++) {
         Edge edge = remainingEdges.get(random.getRandomFromBound(remainingEdges.size()));
         Location l1 = edge.getL1();
@@ -578,6 +553,13 @@ public class DungeonGame implements Dungeon {
   }
 
   private void addOtyughToCaves(Randomizer rnd, int numOtyughs) {
+
+    for (int i = 0; i < caves.size(); i++) {
+      if (caves.get(i).getOtyugh().getQuantity() > 0) {
+        caves.get(i).removeOtyugh();
+      }
+    }
+
     for (int i = 0; i < numOtyughs - 1; i++) {
       Location loc = caves.get(rnd.getRandomFromBound(caves.size()));
 
@@ -590,24 +572,6 @@ public class DungeonGame implements Dungeon {
     }
 
     this.end.addOtyugh();     //atleast one otyugh at end
-  }
-
-  private boolean checkReachability() {
-    try {
-      int id = dungeon.get(0).get(0).getConnectionId();
-      for (int i = 0; i < dungeonRow; i++) {
-        for (int j = 0; j < dungeonCol; j++) {
-          if (dungeon.get(i).get(j).getConnectionId() != id) {
-            return false;
-          }
-        }
-      }
-
-      return true;
-    } catch (NullPointerException exc) {
-      System.err.println("Dungeon may not have been created.");
-    }
-    return false;
   }
 
   @Override
@@ -660,12 +624,10 @@ public class DungeonGame implements Dungeon {
     // create a player
     player = new PlayerImpl();
 
-    do {
-      // construct dungeon
-      if(dungeon != null) {
-        dungeon.clear();
-        caves.clear();
-      }
+    // construct dungeon
+    if (!restart) {
+      dungeon = new ArrayList<>();
+      caves = new ArrayList<>();
       dungeon = new ArrayList<>(dungeonRow);
       for (int i = 0; i < dungeonRow; i++) {
         dungeon.add(new ArrayList<>(dungeonCol));
@@ -676,24 +638,25 @@ public class DungeonGame implements Dungeon {
 
       buildDungeon(rnd);
       enlistCaves();
-      addTreasureToCaves(treasureArrowPercent);
-      addArrowsToLocation(treasureArrowPercent);
-      addPitToCaves(rnd, numOtyughs);
-
-      this.start = caves.get(rnd.getRandomFromBound(caves.size()));
-      this.end = caves.get(rnd.getRandomFromBound(caves.size()));
-
-      startEndLength = calculateStartEndLength();
-
-      addOtyughToCaves(rnd, numOtyughs);
+    }
+    do {
+      startEndLength = setStartAndEndLocation();
     } while (startEndLength < 5);
+    addTreasureToCaves(treasureArrowPercent);
+    addArrowsToLocation(treasureArrowPercent);
+    addPitToCaves(rnd, numOtyughs);
+    addOtyughToCaves(rnd, numOtyughs);
+
+    if (restart) {
+      restart = false;
+    }
   }
 
   private void addPitToCaves(Randomizer rnd, int numPits) {
-    if(numPits > 4) {
+    if (numPits > 4) {
       numPits /= 2;
     }
-    for (int i = 0; i < numPits  ; i++) {
+    for (int i = 0; i < numPits; i++) {
       Location loc = caves.get(rnd.getRandomFromBound(caves.size()));
 
       if (loc.equals(this.start)) {
@@ -703,5 +666,10 @@ public class DungeonGame implements Dungeon {
 
       loc.addPit();
     }
+  }
+
+  @Override
+  public void setRestart() {
+    restart = true;
   }
 }

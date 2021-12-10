@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import dungeon.controller.DungeonViewController;
+import dungeon.controller.Features;
 import dungeon.model.Direction;
 import dungeon.model.SmellFactor;
 

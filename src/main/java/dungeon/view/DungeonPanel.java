@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import dungeon.controller.DungeonViewController;
+import dungeon.controller.Features;
 import dungeon.model.Location;
 import dungeon.model.ReadOnlyDungeon;
 import dungeon.model.SmellFactor;
-import dungeon.model.TreasureType;
-import dungeon.model.WindFactor;
 
 public class DungeonPanel extends JPanel {
 
@@ -40,8 +40,8 @@ public class DungeonPanel extends JPanel {
       for (int j = 0; j < dungeon.getDimensionColumn(); j++) {
         try {
           Location current = dungeon.getLocationAt(i, j);
+          JLabel loc = (JLabel) this.getClientProperty(i + " " + j);
           if (current.getIsTraversed()) {
-            JLabel loc = (JLabel) this.getClientProperty(i + " " + j);
             String imageName = getImageNameOfCell(i, j);
             cell = new File("./dungeon-images/dungeon-images/color-cells/"
                     + imageName + ".png");
@@ -165,5 +165,28 @@ public class DungeonPanel extends JPanel {
     g.drawImage(starting, 0, 0, null);
     g.drawImage(overlay, offsetx, offsety, null);
     return combined;
+  }
+
+  public void addMouseListeners(DungeonViewController controller) {
+    for(int i = 0; i < dungeon.getDimensionRow(); i++) {
+      for(int j= 0; j < dungeon.getDimensionColumn(); j++) {
+        JLabel label = ((JLabel) getClientProperty(i + " " + j));
+        label.addMouseListener(new MyMouseAdapter(controller));
+      }
+    }
+  }
+
+  public void emptyTheLocations() {
+    for(int i = 0; i < dungeon.getDimensionRow(); i++) {
+      for(int j= 0; j < dungeon.getDimensionColumn(); j++) {
+        JLabel label = ((JLabel) getClientProperty(i + " " + j));
+        try {
+          label.setIcon(new ImageIcon(ImageIO.read
+                  (new File("./dungeon-images/dungeon-images/blank.png"))));
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
   }
 }
