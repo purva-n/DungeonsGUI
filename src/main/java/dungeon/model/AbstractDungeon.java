@@ -37,7 +37,7 @@ public abstract class AbstractDungeon implements Dungeon {
   public abstract String getPlayerInfo();
 
   @Override
-  public abstract int makePlayerShoot(String direction, String distanceToShoot);
+  public abstract ShootStatus makePlayerShoot(String direction, String distanceToShoot);
 
   @Override
   public abstract void makePlayerCollectArrow();

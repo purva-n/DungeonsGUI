@@ -5,6 +5,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import javax.imageio.ImageIO;
@@ -22,12 +23,7 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   private JButton quit;
   private JButton restartQuest;
 
-  private JButton rowsOkay;
-  private JButton columnsOkay;
-  private JButton interconnectivityOkay;
-  private JButton isWrapOkay;
-  private JButton numOtyughsOkay;
-  private JButton treasurePercentOkay;
+  private JButton okay;
 
   private DungeonPanel dungeonPanel;
   private LocationPanel locationPanel;
@@ -39,7 +35,9 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   private JTextField isWrap;
   private JTextField numOtyughs;
   private JTextField treasureArrowPercent;
+  private JLabel playerAction;
   private ReadOnlyDungeon dungeon;
+  private static boolean popup;
 
   public DungeonSwingView(ReadOnlyDungeon dungeon) {
 
@@ -59,49 +57,44 @@ public class DungeonSwingView extends JFrame implements DungeonView {
 
     menubar = new JMenuBar();
     menu = new JMenu("Game Settings");
-
-    rowsOkay = new JButton("OK");
-    columnsOkay = new JButton("OK");
-    interconnectivityOkay = new JButton("OK");
-    isWrapOkay = new JButton("OK");
-    numOtyughsOkay = new JButton("OK");
-    treasurePercentOkay = new JButton("OK");
+    okay = new JButton("Okay");
 
     JMenu rowsMenu = new JMenu("Rows");
     rows = new JTextField();
+    rows.setColumns(5);
     rowsMenu.add(rows);
-    rowsMenu.add(rowsOkay);
     menu.add(rowsMenu);
 
     JMenu columnsMenu = new JMenu("Columns:");
     columns = new JTextField();
+    columns.setColumns(5);
     columnsMenu.add(columns);
-    columnsMenu.add(columnsOkay);
     menu.add(columnsMenu);
 
     JMenu interconnectivityMenu = new JMenu("Interconnectivity:");
     interconnectivity = new JTextField();
+    interconnectivity.setColumns(5);
     interconnectivityMenu.add(interconnectivity);
-    interconnectivityMenu.add(interconnectivityOkay);
     menu.add(interconnectivityMenu);
 
     JMenu isWrapMenu = new JMenu("Wrapping:");
     isWrap = new JTextField();
+    isWrap.setColumns(5);
     isWrapMenu.add(isWrap);
-    isWrapMenu.add(isWrapOkay);
     menu.add(isWrapMenu);
 
     JMenu treasureArrowPercentMenu = new JMenu("Treasure Percent:");
     treasureArrowPercent = new JTextField();
+    treasureArrowPercent.setColumns(5);
     treasureArrowPercentMenu.add(treasureArrowPercent);
-    treasureArrowPercentMenu.add(treasurePercentOkay);
     menu.add(treasureArrowPercentMenu);
 
     JMenu otyughNumbers = new JMenu("Otyugh(s):");
     numOtyughs = new JTextField();
+    numOtyughs.setColumns(5);
     otyughNumbers.add(numOtyughs);
-    otyughNumbers.add(numOtyughsOkay);
     menu.add(otyughNumbers);
+    menu.add(okay);
 
     menubar.add(menu);
     menubar.add(startQuest);
@@ -112,6 +105,12 @@ public class DungeonSwingView extends JFrame implements DungeonView {
     this.dungeon = dungeon;
     dungeonPanel = new DungeonPanel(dungeon);
     locationPanel = new LocationPanel(dungeon);
+
+    playerAction = new JLabel();
+    playerAction.setSize(600, 200);
+    playerAction.setForeground(Color.RED);
+    playerAction.setFont(new Font("TimesRoman", Font.BOLD, 20));
+    this.add(playerAction, BorderLayout.NORTH);
 
     playerInfoPanel = new PlayerInfoPanel(dungeon);
     addPlayerInfoPanel();
@@ -133,7 +132,8 @@ public class DungeonSwingView extends JFrame implements DungeonView {
 
   }
 
-  private void addPlayerInfoPanel() {
+  @Override
+  public void addPlayerInfoPanel() {
     playerInfoPanel.setLayout(new GridBagLayout());
     playerInfoPanel.setBackground(new Color(255, 255, 255));
 
@@ -187,12 +187,7 @@ public class DungeonSwingView extends JFrame implements DungeonView {
     startQuest.addActionListener(l -> f.startGame());
     restartQuest.addActionListener(l -> f.restartGame());
     quit.addActionListener(l -> System.exit(0));
-    rowsOkay.addActionListener(l -> f.processRows());
-    columnsOkay.addActionListener(l -> f.processColumns());
-    interconnectivityOkay.addActionListener(l -> f.processInterconnectivity());
-    isWrapOkay.addActionListener(l -> f.processIsWrap());
-    treasurePercentOkay.addActionListener(l -> f.processTreasurePercent());
-    numOtyughsOkay.addActionListener(l -> f.processNumOtyughs());
+    okay.addActionListener(l -> f.processGameSettings());
     this.addKeyListener(key);
   }
 
@@ -312,38 +307,35 @@ public class DungeonSwingView extends JFrame implements DungeonView {
 
     JLabel tempLabel;
 
-    for (int i = 0; i < dungeon.getDimensionRow(); i++) {
-      gbc.gridy = i;
-      for (int j = 0; j < dungeon.getDimensionColumn(); j++) {
-        gbc.gridx = j;
-        try {
-          if (dungeon.getLocationAt(i, j).getIsTraversed()) {
-            String imageName = dungeonPanel.getImageNameOfCell(i, j);
+    if(dungeon.gameBegin()) {
+      for (int i = 0; i < dungeon.getDimensionRow(); i++) {
+        gbc.gridy = i;
+        for (int j = 0; j < dungeon.getDimensionColumn(); j++) {
+          gbc.gridx = j;
+          try {
+            if (dungeon.getLocationAt(i, j).getIsTraversed()) {
+              String imageName = dungeonPanel.getImageNameOfCell(i, j);
 
-            tempLabel = new JLabel(new ImageIcon(ImageIO.read(
-                    new File("./dungeon-images/dungeon-images/color-cells/"
-                            + imageName + ".png"))));
-          } else {
-            tempLabel = new JLabel(new ImageIcon(ImageIO.read(
-                    new File("./dungeon-images/dungeon-images/blank.png"))));
+              tempLabel = new JLabel(new ImageIcon(ImageIO.read(
+                      new File("./dungeon-images/dungeon-images/color-cells/"
+                              + imageName + ".png"))));
+            } else {
+              tempLabel = new JLabel(new ImageIcon(ImageIO.read(
+                      new File("./dungeon-images/dungeon-images/blank.png"))));
+            }
+
+            MouseListener ml = new MyMouseAdapter(controller);
+            tempLabel.addMouseListener(ml);
+            tempLabel.setName(i + " " + j);
+            tempLabel.setSize(new Dimension(250, 250));
+            dungeonPanel.add(tempLabel, gbc);
+            dungeonPanel.putClientProperty(i + " " + j, tempLabel);
+          } catch (IOException ioe) {
+            ioe.printStackTrace();
           }
-
-          MouseListener ml = new MyMouseAdapter(controller);
-          tempLabel.addMouseListener(ml);
-          tempLabel.setName(i + " " + j);
-          tempLabel.setSize(new Dimension(250, 250));
-          dungeonPanel.add(tempLabel, gbc);
-          dungeonPanel.putClientProperty(i + " " + j, tempLabel);
-        } catch (IOException ioe) {
-          ioe.printStackTrace();
         }
       }
     }
-  }
-
-  @Override
-  public void clearPanel() {
-    dungeonPanel.removeAll();
   }
 
   @Override
@@ -353,20 +345,41 @@ public class DungeonSwingView extends JFrame implements DungeonView {
   }
 
   @Override
-  public void shootOtyugh() {
-
-  }
-
-
-  @Override
-  public void pick() {
-
-  }
-
-  @Override
   public void errorPopup(String message) {
-    ErrorPopup errorPopup = new ErrorPopup(message);
+    ErrorPopup errorPopup = new ErrorPopup(this, message);
+    errorPopup.setFocusable(true);
+    errorPopup.requestFocus();
   }
 
+  @Override
+  public void setFocus(boolean b) {
+    if(b) {
+      resetFocus();
+    } else {
+      setFocusable(false);
+    }
+  }
 
+  @Override
+  public void removeDungeonPanelListeners() {
+    for(int i=0; i< dungeon.getDimensionRow(); i++) {
+      for(int j = 0; j < dungeon.getDimensionColumn(); j++) {
+        JLabel tempLabel = ((JLabel) dungeonPanel.getClientProperty(i + " " + j));
+        MouseListener[] mls = tempLabel.getMouseListeners();
+        tempLabel.removeMouseListener(mls[0]);
+      }
+    }
+  }
+
+  @Override
+  public void clearPanel() {
+    dungeonPanel.removeAll();
+    playerInfoPanel.removeAll();
+    this.addPlayerInfoPanel();
+  }
+
+  @Override
+  public void setPlayerAction(String message) {
+    playerAction.setText(message);
+  }
 }

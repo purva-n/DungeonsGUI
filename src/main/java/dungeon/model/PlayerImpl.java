@@ -143,10 +143,10 @@ public class PlayerImpl implements Player {
   }
 
   @Override
-  public int shoot(String direction, String distanceToShoot) {
+  public ShootStatus shoot(String direction, String distanceToShoot) {
 
     if (arrowsQuantity <= 0) {
-      return -1;
+      return ShootStatus.OUT_OF_ARROWS;
     }
 
     if (!checkValidDirection(direction)) {
@@ -154,7 +154,7 @@ public class PlayerImpl implements Player {
     }
 
     Direction dirToGo;
-    int otyghStatus = 0;
+    ShootStatus otyghStatus = ShootStatus.DIDNT_HIT;
     int distance;
     Location current = getAtLocation();
     try {
@@ -196,12 +196,12 @@ public class PlayerImpl implements Player {
 
     if (current.getOtyugh().getQuantity() > 0 && current.getOtyugh().getHealth() > 50) {
       current.getOtyugh().updateHealth(-50);
-      otyghStatus = 1;
+      otyghStatus = ShootStatus.INJURED;
     } else if (current.getOtyugh().getQuantity() > 0 && current.getOtyugh().getHealth() == 50) {
       current.getOtyugh().updateHealth(-50);
 
       current.getOtyugh().updateQuantity(current.getOtyugh().getQuantity() * -1);
-      otyghStatus = 2;
+      otyghStatus = ShootStatus.KILLED;
     }
 
     return otyghStatus;

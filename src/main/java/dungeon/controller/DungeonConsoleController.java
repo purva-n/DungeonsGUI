@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import dungeon.model.ShootStatus;
 import dungeon.model.SmellFactor;
 import dungeon.model.WindFactor;
 import random.Randomizer;
@@ -105,23 +106,23 @@ public class DungeonConsoleController implements DungeonController {
           direction = scan.next();
           out.append("How many caves? 1 - 5 ");
           String distance = scan.next();
-          int effect;
+          ShootStatus effect;
           try {
             effect = dungeonGame.makePlayerShoot(direction, distance);
           } catch (IllegalArgumentException ex) {
-            effect = 0;
+            effect = ShootStatus.DIDNT_HIT;
           }
           switch (effect) {
-            case -1:
+            case OUT_OF_ARROWS:
               out.append("You are out of arrows. Explore to collect arrows to shoot.");
               break;
-            case 0:
+            case DIDNT_HIT:
               out.append("You shoot an arrow in the darkness.\n");
               break;
-            case 1:
+            case INJURED:
               out.append("You hear a howling sound.\n");
               break;
-            case 2:
+            case KILLED:
               out.append("You hear a loud howling sound and a thump to the ground.\n");
               break;
             default:

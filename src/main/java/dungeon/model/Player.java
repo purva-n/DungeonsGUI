@@ -77,7 +77,7 @@ public interface Player {
    * @param distanceToShoot String representation of numeric number of caves to target the Otyugh.
    * @return Otyugh status being hit, injured or not hit by the shoot.
    */
-  int shoot(String direction, String distanceToShoot);
+  ShootStatus shoot(String direction, String distanceToShoot);
 
   /**
    * Method to get whether Player is Alive or not.

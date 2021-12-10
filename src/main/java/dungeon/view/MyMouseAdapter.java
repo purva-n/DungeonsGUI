@@ -14,6 +14,7 @@ import javax.swing.*;
 
 import dungeon.controller.DungeonViewController;
 import dungeon.model.Direction;
+import dungeon.model.SmellFactor;
 
 public class MyMouseAdapter extends MouseAdapter {
 
@@ -36,20 +37,11 @@ public class MyMouseAdapter extends MouseAdapter {
     int col = rowCol.get(1);
     Direction d = listener.getValidDirectionOfLocationAt(row, col);
     String dirInitial = d.name().substring(0,1);
-    listener.move(dirInitial);
-
-
-//    if(!dirInitial.equals("Z")) {
-//      listener.move(dirInitial);
-//      String imageName = view.getImageNameOfCell(row, col);
-//      try {
-//        ((JLabel) e.getSource()).setIcon(new ImageIcon(ImageIO.read(
-//                new File("./dungeon-images/dungeon-images/color-cells/"
-//                        + imageName + ".png"))));
-//      } catch (IOException ie) {
-//        ie.printStackTrace();
-//      }
-//
-//    }
+    SmellFactor smell = listener.move(dirInitial);
+    if(smell == SmellFactor.WITH_OTYUGH_DEAD) {
+      listener.afterPlayerDead();
+    } else if (smell == SmellFactor.WITH_OTYUGH_SAVED) {
+      listener.afterPlayerSaved();
+    }
   }
 }

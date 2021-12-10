@@ -9,6 +9,7 @@ import javax.swing.*;
 import dungeon.model.Direction;
 import dungeon.model.Dungeon;
 import dungeon.model.SmellFactor;
+import dungeon.view.DungeonSwingView;
 import dungeon.view.DungeonView;
 
 import static java.awt.event.KeyEvent.VK_P;
@@ -33,7 +34,22 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
 
   @Override
   public void shootOtyugh(String direction, String caveDistance) {
-    model.makePlayerShoot(direction, caveDistance);
+    switch (model.makePlayerShoot(direction, caveDistance)) {
+      case OUT_OF_ARROWS:
+        view.setPlayerAction("You're out of arrows. Collect more to continue");
+        break;
+      case DIDNT_HIT:
+        view.setPlayerAction("You hit an arrow into the darkness");
+        break;
+      case INJURED:
+        view.setPlayerAction("You hear a howling sound.");
+        break;
+      case KILLED:
+        view.setPlayerAction("You hear a loud howling sound and a thump to the ground.");
+        break;
+      default:
+        view.setPlayerAction("Something went wrong.");
+    }
   }
 
   @Override
@@ -50,10 +66,12 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
   public SmellFactor move(String direction) {
     SmellFactor smell = SmellFactor.NO_SMELL;
     try {
+      view.setPlayerAction("");
       smell = model.movePlayer(direction);
       view.refresh();
     } catch (IllegalArgumentException | IllegalStateException e) {
       //do nothing
+      view.setPlayerAction("No door there");
     }
 
     return smell;
@@ -66,6 +84,8 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
 
   @Override
   public void startGame() {
+    view.clearPanel();
+    view.setPlayerAction("");
     model.startQuest();
     System.out.println("Add panel");
     view.addPanel(this);
@@ -73,6 +93,7 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
 
     System.out.println("view refresh");
     view.refresh();
+    view.setFocus(true);
     System.out.println("View refreshed");
   }
 
@@ -88,7 +109,16 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
   }
 
   @Override
-  public void processRows() {
+  public void processGameSettings() {
+    processRows();
+    processColumns();
+    processInterconnectivity();
+    processIsWrap();
+    processTreasurePercent();
+    processNumOtyughs();
+  }
+
+  private void processRows() {
     Integer row = validateIntegerNumber(view.getRows());
     if (row == null) {
       // view.popup
@@ -99,8 +129,7 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
     }
   }
 
-  @Override
-  public void processColumns() {
+  private void processColumns() {
     Integer col = validateIntegerNumber(view.getColumns());
     if (col == null) {
       // view.popup
@@ -111,8 +140,8 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
     }
   }
 
-  @Override
-  public void processInterconnectivity() {
+
+  private void processInterconnectivity() {
     Integer interconnectivity = validateIntegerNumber(view.getInterconnectivity());
     if (interconnectivity == null) {
       // view.popup
@@ -123,8 +152,7 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
     }
   }
 
-  @Override
-  public void processIsWrap() {
+  private void processIsWrap() {
     String isWrap = view.getIsWrap();
     if (isWrap.equals("Y") || isWrap.equals("y")) {
       model.setIsWrap(true);
@@ -137,10 +165,9 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
     }
   }
 
-  @Override
-  public void processTreasurePercent() {
+  private void processTreasurePercent() {
     Integer treasurePercent = validateIntegerNumber(view.getTreasurePercentage());
-    if (treasurePercent == null) {
+    if (treasurePercent == null || treasurePercent > 100) {
       // view.popup
       view.clearTreasurePercent();
       view.resetTreasureFocus();
@@ -149,8 +176,8 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
     }
   }
 
-  @Override
-  public void processNumOtyughs() {
+
+  private void processNumOtyughs() {
     Integer numOtyughs = validateIntegerNumber(view.getNumOtyughs());
     if (numOtyughs == null) {
       // view.popup
@@ -198,7 +225,7 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
             //do nothing
         }
 
-      } catch (IllegalArgumentException ex) {
+      } catch (IllegalArgumentException | NoSuchElementException ex) {
         // do nothing
       }
       directionSet = false;
@@ -240,7 +267,7 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
             //do nothing
         }
       } catch (IllegalStateException ex) {
-        view.errorPopup(ex.getMessage());
+        view.setPlayerAction(ex.getMessage());
       }
 
       pick = false;
@@ -286,9 +313,22 @@ public class DungeonViewController extends JFrame implements Features, KeyListen
         smellFactor = move("N");
       }
 
-      if(smellFactor == SmellFactor.WITH_OTYUGH_DEAD) {
-       view.makeVisible(false);
+      if (smellFactor == SmellFactor.WITH_OTYUGH_DEAD) {
+        //view.makeVisible(false);
+        afterPlayerDead();
+      } else if (smellFactor == SmellFactor.WITH_OTYUGH_SAVED) {
+        afterPlayerSaved();
       }
     }
+  }
+
+  public void afterPlayerDead() {
+    view.setFocus(false);
+    view.setPlayerAction("Chomp! Chomp! Chomp! You are eaten by Otyugh. Game Over.");
+    view.removeDungeonPanelListeners();
+  }
+
+  public void afterPlayerSaved() {
+    view.setPlayerAction("Phew! That was a close save. Run away quick");
   }
 }

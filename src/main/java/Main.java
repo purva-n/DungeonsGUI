@@ -23,7 +23,7 @@ public class Main {
    * Method which marks the beginning of the execution of the program.
    * Reference at which the game play begins.
    *
-   * @param args USer inputs to the java / jar program.
+   * @param args User inputs to the java / jar program.
    */
   public static void main(String[] args) throws IOException {
 

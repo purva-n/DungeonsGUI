@@ -143,7 +143,7 @@ public class DungeonStatic extends AbstractDungeon {
   }
 
   @Override
-  public int makePlayerShoot(String direction, String distanceToShoot) {
+  public ShootStatus makePlayerShoot(String direction, String distanceToShoot) {
     return player.shoot(direction, distanceToShoot);
   }
 

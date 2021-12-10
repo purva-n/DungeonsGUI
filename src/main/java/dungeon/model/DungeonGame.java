@@ -35,6 +35,13 @@ public class DungeonGame implements Dungeon {
     gameStarted = false;
     this.rnd = rnd;
     caves = new ArrayList<>();
+
+    //default values
+    dungeonRow = 8;
+    dungeonCol = 8;
+    interconnectivity = (int) (dungeonRow * dungeonCol * 0.1);
+    treasureArrowPercent = 40;
+    numOtyughs = interconnectivity / 2;
   }
 
   /**
@@ -164,7 +171,7 @@ public class DungeonGame implements Dungeon {
   }
 
   @Override
-  public int makePlayerShoot(String direction, String distanceToShoot) {
+  public ShootStatus makePlayerShoot(String direction, String distanceToShoot) {
     return player.shoot(direction, distanceToShoot);
   }
 

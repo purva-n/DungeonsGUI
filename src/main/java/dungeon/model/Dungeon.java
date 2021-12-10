@@ -1,7 +1,5 @@
 package dungeon.model;
 
-import org.javatuples.Pair;
-
 /**
  * Interface that declares functions and operations performed on the {@link Dungeon}.
  * When building and using it for the Game.
@@ -15,7 +13,7 @@ public interface Dungeon extends ReadOnlyDungeon {
    */
   SmellFactor startQuest();
 
-  int makePlayerShoot(String direction, String distanceToShoot);
+  ShootStatus makePlayerShoot(String direction, String distanceToShoot);
 
   void makePlayerCollectArrow();
 

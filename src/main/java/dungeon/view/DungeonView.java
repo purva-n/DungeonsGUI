@@ -10,6 +10,8 @@ import dungeon.controller.Features;
 
 public interface DungeonView {
 
+  void addPlayerInfoPanel();
+
   void setFeatures(Features f, KeyListener keys);
 
   void makeVisible(boolean visible);
@@ -54,15 +56,15 @@ public interface DungeonView {
 
   void addPanel(DungeonViewController controller);
 
-  void clearPanel();
-
   void resetFocus();
 
-  void shootOtyugh();
-
-  void addKeyListener(KeyListener listener);
-
-  void pick();
-
   void errorPopup(String message);
+
+  void setFocus(boolean b);
+
+  void removeDungeonPanelListeners();
+
+  void clearPanel();
+
+  void setPlayerAction(String message);
 }

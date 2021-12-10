@@ -1,8 +1,7 @@
 package dungeon.controller;
 
-import java.awt.event.KeyListener;
-
 import dungeon.model.Direction;
+import dungeon.model.ShootStatus;
 import dungeon.model.SmellFactor;
 
 public interface Features {
@@ -23,15 +22,17 @@ public interface Features {
 
   void restartGame();
 
-  void processRows();
+//  void processRows();
+//
+//  void processColumns();
+//
+//  void processInterconnectivity();
+//
+//  void processIsWrap();
+//
+//  void processTreasurePercent();
+//
+//  void processNumOtyughs();
 
-  void processColumns();
-
-  void processInterconnectivity();
-
-  void processIsWrap();
-
-  void processTreasurePercent();
-
-  void processNumOtyughs();
+  void processGameSettings();
 }
